@@ -3,6 +3,7 @@
 	<name>Azur540V</name>
 	<comment></comment>
 	<projects>
+		<project>Azur540V</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

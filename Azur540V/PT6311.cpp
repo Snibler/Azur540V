@@ -42,25 +42,37 @@
 #define DISPLAY_ON_13_16  	0b10001110	//Pulse width = 13/16
 #define DISPLAY_ON_14_16  	0b10001111	//Pulse width = 14/16
 
-PT6311::PT6311(uint8_t COMMAND){
-	initDisplay();
-}
-
-PT6311::~PT6311(){
-	end();
-}
-
-void PT6311::initDisplay(){
+void PT6311::PT6311_init(){
+	pinMode(PT_CLK, OUTPUT);
+	pinMode(PT_STB, OUTPUT);
+	pinMode(PT_DATA, OUTPUT);
 	delay(200);
-
-	for(uint8_t i = 0;i <= 0x2F;i++){
-	PT6311::write(WRITE_DATA_TO_DISPLAY);
-	PT6311::write(0x0);
-	}
-	PT6311::write(DISPLAY_MODE_15_13);
-	PT6311::write(DISPLAY_ON_10_16);
+		PT6311::PT6311_writeCommand(WRITE_DATA_TO_DISPLAY);		//Command 2: Data Setting Commands
+		PT6311::PT6311_writeCommand(ADDRESS_BOTTOM);			//Command 3: Address Setting Commands
+		for(uint8_t i = 0;i <= 0x2F;i++){
+		PT6311::PT6311_writeData(0x0);							//Data 0x0
+		}
+		PT6311::PT6311_writeCommand(DISPLAY_MODE_15_13);		//Command 1: Display Mode Commands
+		PT6311::PT6311_writeCommand(DISPLAY_ON_10_16);			//Command 4: Display Control Commands
 }
 
-void PT6311::end(){
+void PT6311::PT6311_writeCommand(uint8_t command){
+	digitalWrite(PT_STB, HIGH);
+	delayMicroseconds(1);
+	digitalWrite(PT_STB, LOW);
+	PT6311::PT6311_write(command);
+}
+
+void PT6311::PT6311_writeData(uint8_t data){
+	PT6311::PT6311_write(data);
+}
+
+uint8_t PT6311::PT6311_read(){
+	delayMicroseconds(1);
+
+	return PT6311::data;
+}
+
+void PT6311::PT6311_write(uint8_t data){
 
 }

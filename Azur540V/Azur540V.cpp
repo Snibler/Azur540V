@@ -1,9 +1,9 @@
 #include <Arduino.h>
 #include <SPI.h>
 #include "PT6311.h"
-#include "LV23002M.h"
-#include <SoftwareSerial.cpp>
-#include <SPI.cpp>
+//#include "LV23002M.h"
+//#include <SoftwareSerial.cpp>
+//#include <SPI.cpp>
 
 void setup() {
 	// initialize digital pin LED_BUILTIN (13) as an output.
