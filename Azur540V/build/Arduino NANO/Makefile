@@ -10,7 +10,6 @@ mymkdir = mkdir -p $1
 endif
 
 PROJECT_OBJS = \
-	project/Azur540V.cpp.o \
 
 PLATFORM_CORE_OBJS = \
 	core/new.cpp.o \
@@ -62,14 +61,6 @@ clean:
 
 size:
 	"/home/snibler/.arduinocdt/packages/arduino/tools/avr-gcc/4.9.2-atmel3.5.4-arduino2/bin/avr-size" -A "./Azur540V.elf"
-
-project/Azur540V.cpp.o: ../../Azur540V.cpp project/Azur540V.cpp.d
-	@$(call mymkdir,$(dir $@))
-	"/home/snibler/.arduinocdt/packages/arduino/tools/avr-gcc/4.9.2-atmel3.5.4-arduino2/bin/avr-g++" -c -g -Os -w -std=gnu++11 -fpermissive -fno-exceptions -ffunction-sections -fdata-sections -fno-threadsafe-statics -MMD -flto -mmcu=atmega328p -DF_CPU=16000000L -DARDUINO=10608 -DARDUINO_AVR_NANO -DARDUINO_ARCH_AVR   -I"/home/snibler/.arduinocdt/packages/arduino/hardware/avr/1.6.20/cores/arduino" -I"/home/snibler/.arduinocdt/packages/arduino/hardware/avr/1.6.20/variants/eightanaloginputs" "$<" -o "$@"
-
-project/Azur540V.cpp.d: ;
-
--include project/Azur540V.cpp.d 
 
 
 core/new.cpp.o: /home/snibler/.arduinocdt/packages/arduino/hardware/avr/1.6.20/cores/arduino/new.cpp core/new.cpp.d
