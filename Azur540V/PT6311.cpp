@@ -5,23 +5,28 @@
  *      Author: snibler
  *
  */
-#include <Arduino.h>
 #include "PT6311.h"
 
-//defining pins to witch MEGA connected
-#define PT_CLK A6
-#define PT_STB A5
-#define PT_DATA A4
+void PT6311::Test_display(){
+	PT6311::PT6311_writeCommand(WRITE_DATA_TO_DISPLAY);			//Command 2: Data Setting Commands
+	PT6311::PT6311_writeCommand(ADDRESS_BOTTOM);				//Command 3: Address Setting Commands
+		for(byte i = 0;i <= 0x2F;i++){
+			PT6311::PT6311_writeData(i);						//Data 0..47
+		  	}
+	PT6311::PT6311_writeCommand(DISPLAY_MODE_15_13);			//Command 1: Display Mode Commands
+	PT6311::PT6311_writeCommand(DISPLAY_ON_10_16);				//Command 4: Display Control Commands
+}
 
 void PT6311::PT6311_init(){
 	pinMode(PT_CLK, OUTPUT);
 	pinMode(PT_STB, OUTPUT);
 	pinMode(PT_DATA, OUTPUT);
+	digitalWrite(PT_STB, HIGH);
 	delay(200);
 	PT6311::PT6311_writeCommand(WRITE_DATA_TO_DISPLAY);		//Command 2: Data Setting Commands
 	PT6311::PT6311_writeCommand(ADDRESS_BOTTOM);			//Command 3: Address Setting Commands
 	for(byte i = 0;i <= 0x2F;i++){
-		PT6311::PT6311_writeData(0);						//Data 0x0
+		PT6311::PT6311_writeData(0x0);						//Data 0x0
 		}
 	PT6311::PT6311_writeCommand(DISPLAY_MODE_15_13);		//Command 1: Display Mode Commands
 	PT6311::PT6311_writeCommand(DISPLAY_ON_10_16);			//Command 4: Display Control Commands
@@ -51,7 +56,7 @@ byte PT6311::PT6311_read(){
 			_NOP();
 			_NOP();
 			_NOP();
-		for (byte count = 0; count < 8; count++)            //запись конфигурации
+		for (byte count = 0; count < 8; count++)
 		   {
 			if(digitalRead(PT_DATA)) PT6311::data |= 1;
 			PT6311::data = PT6311::data<<1;
@@ -88,7 +93,7 @@ void PT6311::PT6311_write(byte data){
 		_NOP();
 		_NOP();
 		_NOP();
-	for (byte count = 0; count < 8; count++)            //запись конфигурации
+	for (byte count = 0; count < 8; count++)
 	   {
 	    if( (data<<count)&0x80) digitalWrite(PT_DATA,HIGH);
 	                       else digitalWrite(PT_DATA,LOW);

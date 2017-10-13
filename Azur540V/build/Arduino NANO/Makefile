@@ -11,6 +11,7 @@ endif
 
 PROJECT_OBJS = \
 	project/Azur540V.cpp.o \
+	project/LV23002M.cpp.o \
 	project/PT6311.cpp.o \
 
 PLATFORM_CORE_OBJS = \
@@ -73,6 +74,14 @@ project/Azur540V.cpp.o: ../../Azur540V.cpp project/Azur540V.cpp.d
 project/Azur540V.cpp.d: ;
 
 -include project/Azur540V.cpp.d 
+
+project/LV23002M.cpp.o: ../../LV23002M.cpp project/LV23002M.cpp.d
+	@$(call mymkdir,$(dir $@))
+	"/home/snibler/.arduinocdt/packages/arduino/tools/avr-gcc/4.9.2-atmel3.5.4-arduino2/bin/avr-g++" -c -g -Os -w -std=gnu++11 -fpermissive -fno-exceptions -ffunction-sections -fdata-sections -fno-threadsafe-statics -MMD -flto -mmcu=atmega328p -DF_CPU=16000000L -DARDUINO=10608 -DARDUINO_AVR_NANO -DARDUINO_ARCH_AVR   -I"/home/snibler/.arduinocdt/packages/arduino/hardware/avr/1.6.20/cores/arduino" -I"/home/snibler/.arduinocdt/packages/arduino/hardware/avr/1.6.20/variants/eightanaloginputs" -I"/home/snibler/.arduinocdt/packages/arduino/hardware/avr/1.6.20/libraries/SPI/src" -I"/home/snibler/.arduinocdt/packages/arduino/hardware/avr/1.6.20/libraries/SoftwareSerial/src" "$<" -o "$@"
+
+project/LV23002M.cpp.d: ;
+
+-include project/LV23002M.cpp.d 
 
 project/PT6311.cpp.o: ../../PT6311.cpp project/PT6311.cpp.d
 	@$(call mymkdir,$(dir $@))
