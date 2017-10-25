@@ -6,14 +6,15 @@
  *
  */
 #include <Arduino.h>
+#include "digits.h"
 
 #ifndef PT6311_H_
 #define PT6311_H_
 
 //defining pins to witch MEGA connected
-#define PT_CLK A6
-#define PT_STB A5
-#define PT_DATA A4
+#define PT_CLK A5
+#define PT_STB A4
+#define PT_DATA A3
 
 //COMMAND 1: DISPLAY MODE SETTING COMMANDS
 #define DISPLAY_MODE_8_20  0b00000000	//0XXX: 8 digits, 20 segments
@@ -46,15 +47,16 @@
 
 class PT6311 {
 private:
+	byte data;
 	void PT6311_write(byte dat_com);
 public:
-	byte data;
+	PT6311();
 	void PT6311_init();
 	void PT6311_writeCommand(byte command);
 	void PT6311_writeData(byte data);
-	byte PT6311_read();
+	void PT6311_read();
 	void Test_display();
-
+	void Display_OFF();
 };
 
 #endif /* PT6311_H_ */
