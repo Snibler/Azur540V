@@ -7,6 +7,8 @@
  */
 #include <Arduino.h>
 #include "digits.h"
+#include "alphabet.h"
+#include "special.h"
 
 #ifndef PT6311_H_
 #define PT6311_H_
@@ -48,12 +50,12 @@
 class PT6311 {
 private:
 	byte data;
-	void PT6311_write(byte dat_com);
+	void PT6311_writeByte(byte dat_com);
+	void PT6311_writeCommand(byte command);
+	void PT6311_writeData(byte data);
 public:
 	PT6311();
 	void PT6311_init();
-	void PT6311_writeCommand(byte command);
-	void PT6311_writeData(byte data);
 	void PT6311_read();
 	void Test_display();
 	void Display_OFF();

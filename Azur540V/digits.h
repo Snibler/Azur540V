@@ -13,7 +13,7 @@
 #define TWO 	0x8661
 #define THREE 	0x8642
 #define FOUR 	0xC403
-#define FIVE 	0x4245
+#define FIVE 	0xC243
 #define SIX 	0xC263
 #define SEVEN 	0x0602
 #define EIGHT 	0xC663

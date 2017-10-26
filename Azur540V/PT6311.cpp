@@ -21,10 +21,34 @@ PT6311::PT6311(){
 void PT6311::Test_display(){
 		PT6311::PT6311_writeCommand(WRITE_DATA_TO_DISPLAY);
 
+		PT6311::PT6311_writeCommand(ADDRESS_BOTTOM);
+				PT6311::PT6311_writeData(((U>>8) & 0xFF) | dts);
+		PT6311::PT6311_writeCommand(ADDRESS_BOTTOM|0x01);
+				PT6311::PT6311_writeData(U & 0xFF);
+		PT6311::PT6311_writeCommand(ADDRESS_BOTTOM|0x03);
+				PT6311::PT6311_writeData(((sp>>8) & 0xFF) | RDS);
+		PT6311::PT6311_writeCommand(ADDRESS_BOTTOM|0x04);
+				PT6311::PT6311_writeData(sp & 0xFF);
 		PT6311::PT6311_writeCommand(ADDRESS_BOTTOM|0x06);
-				PT6311::PT6311_writeData((Digits[0]>>8) & 0xFF);
+				PT6311::PT6311_writeData(((Z>>8) & 0xFF) | _2dp);
 		PT6311::PT6311_writeCommand(ADDRESS_BOTTOM|0x07);
-				PT6311::PT6311_writeData(Digits[0] & 0xFF);
+				PT6311::PT6311_writeData(Z & 0xFF);
+		PT6311::PT6311_writeCommand(ADDRESS_BOTTOM|0x09);
+				PT6311::PT6311_writeData(((Y>>8) & 0xFF) | ST);
+		PT6311::PT6311_writeCommand(ADDRESS_BOTTOM|0x0A);
+				PT6311::PT6311_writeData((Y & 0xFF) | DOLBY);
+		PT6311::PT6311_writeCommand(ADDRESS_BOTTOM|0x0C);
+				PT6311::PT6311_writeData(((X>>8) & 0xFF) | _2dp);
+		PT6311::PT6311_writeCommand(ADDRESS_BOTTOM|0x0D);
+				PT6311::PT6311_writeData(X & 0xFF);
+		PT6311::PT6311_writeCommand(ADDRESS_BOTTOM|0x0F);
+				PT6311::PT6311_writeData(((W>>8) & 0xFF) | TUNED);
+		PT6311::PT6311_writeCommand(ADDRESS_BOTTOM|0x10);
+				PT6311::PT6311_writeData((W & 0xFF) | two_coils);
+		PT6311::PT6311_writeCommand(ADDRESS_BOTTOM|0x12);
+				PT6311::PT6311_writeData((V>>8) & 0xFF);
+		PT6311::PT6311_writeCommand(ADDRESS_BOTTOM|0x13);
+				PT6311::PT6311_writeData(V & 0xFF);
 
 		PT6311::PT6311_writeCommand(DISPLAY_MODE_9_19);
 		PT6311::PT6311_writeCommand(DISPLAY_ON_14_16);
@@ -50,11 +74,11 @@ void PT6311::PT6311_writeCommand(byte command){
 	digitalWrite(PT_STB, HIGH);
 	delayMicroseconds(1);
 	digitalWrite(PT_STB, LOW);
-	PT6311::PT6311_write(command);
+	PT6311::PT6311_writeByte(command);
 }
 
 void PT6311::PT6311_writeData(byte data){
-	PT6311::PT6311_write(data);
+	PT6311::PT6311_writeByte(data);
 }
 
 void PT6311::PT6311_read(){
@@ -69,7 +93,7 @@ void PT6311::PT6311_read(){
 		   }
 }
 
-void PT6311::PT6311_write(byte data){
+void PT6311::PT6311_writeByte(byte data){
 	pinMode(PT_DATA, OUTPUT);
 	for (byte count = 0; count < 8; count++)
 	   {
