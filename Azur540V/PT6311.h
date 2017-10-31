@@ -9,6 +9,7 @@
 #include "digits.h"
 #include "alphabet.h"
 #include "special.h"
+#include "keys.h"
 
 #ifndef PT6311_H_
 #define PT6311_H_
@@ -35,6 +36,15 @@
 #define READ_SW				   0b01000011
 //COMMAND 3: ADDRESS SETTING COMMANDS 00H to 2FH (address of the display memory)
 #define ADDRESS_BOTTOM 	0b11000000	//00H
+#define ADDRESS1 0xC0
+#define ADDRESS2 0xC3
+#define ADDRESS3 0xC6
+#define ADDRESS4 0xC9
+#define ADDRESS5 0xCC
+#define ADDRESS6 0xCF
+#define ADDRESS7 0xD2
+#define ADDRESS8 0xD5
+#define ADDRESS9 0xD8
 #define ADDRESS_TOP 	0b11101111	//2FH
 //COMMAND 4: DISPLAY CONTROL COMMANDS
 #define DISPLAY_OFF 		0b10000000	//Pulse width = 1/16, Key Scan Continues
@@ -49,16 +59,20 @@
 
 class PT6311 {
 private:
-	byte data;
+
 	void PT6311_writeByte(byte dat_com);
 	void PT6311_writeCommand(byte command);
 	void PT6311_writeData(byte data);
+
 public:
+	byte data;
 	PT6311();
 	void PT6311_init();
-	void PT6311_read();
-	void Test_display();
+	void Write_Display();
 	void Display_OFF();
+	void Disk_Demo();
+	void Display_Write();
+	void PT6311_read();
 };
 
 #endif /* PT6311_H_ */
