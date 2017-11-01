@@ -12,7 +12,6 @@ void LV23002M::LM23002M(){
 
 }
 void LV23002M::LV23002M_INmode(byte INmode, byte INdata1, byte INdata2, byte INdata3){
-	SPI.beginTransaction(SPISettings(16000000, MSBFIRST, SPI_MODE1));
 	digitalWrite(LV_CE, LOW);
 	SPI.transfer(INmode);
 	digitalWrite(LV_CE, HIGH);
@@ -23,13 +22,12 @@ void LV23002M::LV23002M_INmode(byte INmode, byte INdata1, byte INdata2, byte INd
 	SPI.endTransaction();
 }
 void LV23002M::LV23002M_OUTmode(){
-	SPI.beginTransaction(SPISettings(16000000, MSBFIRST, SPI_MODE0));
 	digitalWrite(LV_CE, LOW);
 	SPI.transfer(OUTmode);
 	digitalWrite(LV_CE, HIGH);
-	LV23002M::OUTdata1 = SPI.transfer(0x00);
-	LV23002M::OUTdata2 = SPI.transfer(0x00);
-	LV23002M::OUTdata3 = SPI.transfer(0x00);
+	OUTdata1 = SPI.transfer(0x00);
+	OUTdata2 = SPI.transfer(0x00);
+	OUTdata3 = SPI.transfer(0x00);
 	digitalWrite(LV_CE, LOW);
 	SPI.endTransaction();
 }

@@ -21,6 +21,10 @@
 #define IN2mode 0b10010100
 #define OUTmode 0b01010100
 
+//defining INdata bytes
+#define MUTE	0x08
+
+
 class LV23002M {
 private:
 public:
