@@ -15,7 +15,7 @@ void LV23002M::LM23002M_init(){
 void LV23002M::LV23002M_INmode(byte INmode, byte INdata1, byte INdata2, byte INdata3){
 //	digitalWrite(LV_CE, LOW);
 	PORTB &= ~(1 << PB2);
-	asm volatile("nop");
+		_NOP();
 	asm volatile("nop");
 	asm volatile("nop");
 	asm volatile("nop");

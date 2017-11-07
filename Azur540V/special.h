@@ -9,30 +9,30 @@
 #define SPECIAL_H_
 
 #define DVD 	0x01
-#define _3D		0x08
-#define MEM 	0x10
+#define _3Dcode	0x08
+#define MEMcode	0x10
 #define kHz		0x20
-#define MHz		0x40
+#define MHzcode	0x40
 #define s		0x01
 #define v		0x02
 #define cd		0x04
 #define MP3		0x08
 #define PAUSE	0x10
-#define PLAY	0x20
+#define PLAYcode 0x20
 #define PLAY_REV 0x40
 #define REPEAT	0x80
 #define AM		0x01
 #define ALL		0x02
-#define FM		0x04
+#define FMcode	0x04
 #define PBC		0x01
-#define TUNED	0x01
-#define two_coils 0x80
-#define ST		0x01
-#define DOLBY	0x80
-#define RDS		0x01
-#define dts		0x01
-#define _2dp	0x01
-#define dp		0x80
+#define TUNEDcode	0x01
+#define two_coilscode 0x80
+#define STcode	0x01
+#define DOLBYcode 0x80
+#define RDScode	0x01
+#define dtscode	0x01
+#define _2dpcode	0x01
+#define dpcode		0x80
 
 #define DISK_FULL  	0xFE07
 #define DISK1		0xFE06
