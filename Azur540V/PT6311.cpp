@@ -12,6 +12,7 @@ word converter(char symbol);
 unsigned int Disk[10] = {DISK1, DISK2, DISK3, DISK4, DISK5, DISK6, DISK7, DISK8, DISK9, DISK10};
 
 PT6311::PT6311(){
+	position = 0;
 	KeyData = 0;
 	pinMode(PT_CLK, OUTPUT);
 	pinMode(PT_STB, OUTPUT);
@@ -42,9 +43,42 @@ word digit5 = 0x0;
 word digit6 = 0x0;
 word digit7 = 0x0;
 word digits[7] = {digit7, digit6, digit5, digit4, digit3, digit2, digit1};
-	if(size <= 7)
+byte shift = 0;
+byte length = size;
+	for (byte i = 0; i < size; i++){
+			if (numbers_or_text[i] == 46 && i == 3) {_dp1 = true; length--;}
+			if (numbers_or_text[i] == 58 && i == 3) {__2dp1 = true; length--;}
+			if (numbers_or_text[i] == 46 && i == 6) {_dp2 = true; length--;}
+			if (numbers_or_text[i] == 58 && i == 6) {__2dp2 = true; length--;}
+	}
+	if(length <= 7)
 		for (byte i = 0; i < 7; i++){
-			digits[i] = converter (numbers_or_text[i]);
+			if (numbers_or_text[i] == 46 || numbers_or_text[i] == 58){
+				if(shift == 2) digits[i] = converter (numbers_or_text[i+2]);
+				else digits[i] = converter (numbers_or_text[i+1]);
+				shift++;
+			} else {
+				if(shift == 1){
+					if(numbers_or_text[i+1] == 46 || numbers_or_text[i+1] == 58){
+						digits[i] = converter (numbers_or_text[i+2]);
+						shift++;
+					}
+					else digits[i] = converter (numbers_or_text[i+1]);
+				}
+				else
+				digits[i] = converter (numbers_or_text[i]);
+			}
+	} else {
+		for (byte j = 0; j < 7; j++){
+			for(byte i = position; i < size; i++){
+				digits[j] = converter (numbers_or_text[i]);
+				break;
+			}
+			if(position == size) position = 0;
+			else position++;
+		}
+
+
 	}
 	PT6311::PT6311_writeCommand(WRITE_DATA_TO_DISPLAY);
 	//Digit 1
@@ -101,10 +135,16 @@ word digits[7] = {digit7, digit6, digit5, digit4, digit3, digit2, digit1};
 					if(_PLAY) {
 						PT6311::PT6311_writeCommand(ADDRESS8);
 							PT6311::PT6311_writeData(PLAYcode);
-					}
+					} else {
+						PT6311::PT6311_writeCommand(ADDRESS8);
+							PT6311::PT6311_writeData(0x00);
+						}
 					if (_FM){
 						PT6311::PT6311_writeCommand(ADDRESS8 + 1);
 							PT6311::PT6311_writeData(FMcode);
+					} else {
+						PT6311::PT6311_writeCommand(ADDRESS8 + 1);
+							PT6311::PT6311_writeData(0x00);
 					}
 	//Digit 9
 			PT6311::PT6311_writeCommand(ADDRESS9);
@@ -239,7 +279,7 @@ void PT6311::PT6311_writeByte(byte data){
 word converter(char symbol){
 	word result = 0;
 	if(symbol == 32) result = sp;
-	if(symbol == 46) result = dpcode;
+//	if(symbol == 46) result = dpcode;
 	if(symbol == 48) result = ZERO;
 	if(symbol == 49) result = ONE;
 	if(symbol == 50) result = TWO;
@@ -250,7 +290,7 @@ word converter(char symbol){
 	if(symbol == 55) result = SEVEN;
 	if(symbol == 56) result = EIGHT;
 	if(symbol == 57) result = NINE;
-	if(symbol == 58) result = _2dpcode;
+//	if(symbol == 58) result = _2dpcode;
 	if(symbol == 65 || symbol == 97)  result = A;
 	if(symbol == 66 || symbol == 98)  result = B;
 	if(symbol == 67 || symbol == 99)  result = C;
@@ -277,5 +317,5 @@ word converter(char symbol){
 	if(symbol == 88 || symbol == 120) result = X;
 	if(symbol == 89 || symbol == 121) result = Y;
 	if(symbol == 90 || symbol == 122) result = Z;
-	else return result;
+	return result;
 }

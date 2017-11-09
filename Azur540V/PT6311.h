@@ -59,7 +59,7 @@
 
 class PT6311 {
 private:
-
+	byte position;
 	void PT6311_writeByte(byte dat_com);
 	void PT6311_writeCommand(byte command);
 	void PT6311_writeData(byte data);
@@ -72,7 +72,7 @@ public:
 	void Disk_Demo();
 	void Display_Write(char numbers_or_text[],byte size, bool _dts, bool _RDS, bool _ST, bool _DOLBY,
 			bool _TUNED, bool _PLAY, bool _FM, bool _MHz, bool _MEM, bool __3D, bool __2dp1,
-			bool __2dp2, bool _dp1, bool _dp2);;
+			bool __2dp2, bool _dp1, bool _dp2);
 	void PT6311_readKey();
 };
 

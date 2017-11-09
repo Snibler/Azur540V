@@ -10,8 +10,8 @@
 
 #define FUNCTION	0x20
 #define BAND		0x08
-#define TUNING-		0x04
-#define TUNING+		0x02
+#define TUNING_M	0x04
+#define TUNING_P	0x02
 #define OPEN_CLOSE	0x10
 #define PLAYB		0x80
 #define STOP		0x40
