@@ -4,6 +4,9 @@
 PT6311 disp;
 LV23002M radio;
 
+char * toArray(word number);
+word Freq;
+
 bool dts 	= false;
 bool RDS 	= false;
 bool ST 	= false;
@@ -37,24 +40,35 @@ void setup() {
 }
 
 void loop() {
-	delay(500);
-	Serial.println(radio.IFcounterbin);
+	delay(250);
+//	Serial.println(radio.IFcounterbin);
 	disp.PT6311_readKey();
 	if (disp.KeyData == FUNCTION) _NOP();
-	if (disp.KeyData == BAND) radio.autoscan();
-	if (disp.KeyData == TUNING_M) radio.freq_m();
-	if (disp.KeyData == TUNING_P) radio.freq_p();
-	if (disp.KeyData == OPEN_CLOSE) _NOP();
+	if (disp.KeyData == BAND){
+		radio.autoscan();
+	}
+	if (disp.KeyData == TUNING_M){
+		radio.freq_m();
+		Freq = radio.FQcurrent-1070;
+		disp.Display_Write(toArray(Freq),5, dts,RDS,ST = true,DOLBY,TUNED = true,PLAY = true,FM = true,MHz = true,MEM = false,_3D,_2dp1,_2dp2,dp1 = true,dp2);
+	}
+	if (disp.KeyData == TUNING_P){
+		radio.freq_p();
+		Freq = radio.FQcurrent-1070;
+		disp.Display_Write(toArray(Freq),5, dts,RDS,ST = true,DOLBY,TUNED = true,PLAY = true,FM = true,MHz = true,
+				MEM = false,_3D,_2dp1,_2dp2,dp1 = true,dp2);
+	}
+	if (disp.KeyData == OPEN_CLOSE){
+		radio.writeMEM();
+		Freq = radio.FQcurrent-1070;
+		disp.Display_Write(toArray(Freq),5, dts,RDS,ST = true,DOLBY,TUNED = true,PLAY = true,FM = true,MHz = true,
+				MEM = true,_3D,_2dp1,_2dp2,dp1 = true,dp2);
+	}
 	if (disp.KeyData == PLAYB){
 		radio.playMEM();
-		radio.readstatus();
-		if(bit_is_clear(radio.indicators, 2)){
-			TUNED = true;
-			PLAY = true;
-			MHz = true;
-		}
-		if(bit_is_clear(radio.indicators, 3)) ST = true;
-		disp.Display_Write(" TUNER",sizeof(" TUNER")-1, dts,RDS,ST,DOLBY,TUNED,PLAY,FM,MHz,MEM,_3D,_2dp1,_2dp2,dp1,dp2);
+		Freq = radio.FQcurrent-1070;
+		disp.Display_Write(toArray(Freq),5, dts,RDS,ST = true,DOLBY,TUNED = true,PLAY = true,FM = true,MHz = true,
+				MEM = false,_3D,_2dp1,_2dp2,dp1 = true,dp2);
 	}
 	if (disp.KeyData == STOP){
 		radio.mute();
@@ -62,8 +76,20 @@ void loop() {
 		TUNED = false;
 		PLAY = false;
 		MHz = false;
+		MEM = false;
+		dp1 = false;
 		disp.Display_Write(" MUTE",sizeof(" MUTE")-1, dts,RDS,ST,DOLBY,TUNED,PLAY,FM,MHz,MEM,_3D,_2dp1,_2dp2,dp1,dp2);
 	}
-
-
 }
+char * toArray(word number)
+    {
+		byte n = 7;
+      char *numberArray = calloc(n, sizeof(char));
+        for (byte i = 0; i < n; ++i, number /= 10 )
+        {
+            if(i <= 4) numberArray[4-i] = number % 10 + 48;
+            else numberArray[i] = 0;
+        }
+        if(numberArray[0] == 48) numberArray[0] = 0;
+        return numberArray;
+    }

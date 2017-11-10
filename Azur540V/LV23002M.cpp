@@ -11,43 +11,48 @@
 void LV23002M::LM23002M_init(){
 	SPI.begin();
 	SPI.beginTransaction(SPISettings(500000, MSBFIRST, SPI_MODE0));
-	FQ = FQbottom;
 	FQcurrent = FQbottom;
 }
 void LV23002M::autoscan(){
 
 }
+void LV23002M::writeMEM(){
+		EEPROM.write(0, highByte(FQcurrent));
+		EEPROM.write(1, lowByte(FQcurrent));
+}
 void LV23002M::freq_m(){
-	if(FQ > FQbottom){
-		FQ = FQcurrent - 10;
-		LV23002M::LV23002M_INmode(IN1mode,reverseByte(lowByte(FQ)),reverseByte(highByte(FQ)),0x40);
+	if(FQcurrent > FQbottom){
+		FQcurrent -= 10;
+		LV23002M::LV23002M_INmode(IN1mode,reverseByte(lowByte(FQcurrent)),reverseByte(highByte(FQcurrent)),0x41);
 		LV23002M::LV23002M_INmode(IN2mode,0x57,0xA8,0x28);
 	} else _NOP();
 }
 void LV23002M::freq_p(){
-	if(FQ < FQtop){
-		FQ = FQcurrent + 10;
-		LV23002M::LV23002M_INmode(IN1mode,reverseByte(lowByte(FQ)),reverseByte(highByte(FQ)),0x40);
+	if(FQcurrent < FQtop){
+		FQcurrent += 10;
+		LV23002M::LV23002M_INmode(IN1mode,reverseByte(lowByte(FQcurrent)),reverseByte(highByte(FQcurrent)),0x41);
 		LV23002M::LV23002M_INmode(IN2mode,0x57,0xA8,0x28);
 	} else _NOP();
 }
 void LV23002M::playMEM(){
-//write to radio 101.1FM "Радио Пятница"
-	LV23002M::LV23002M_INmode(IN1mode,reverseByte(lowByte(2236)),reverseByte(highByte(2236)),0x40);
+	byte highByteFQcurrent = EEPROM.read(0);
+	byte lowByteFQcurrent = EEPROM.read(1);
+	FQcurrent = 0;
+	FQcurrent |= highByteFQcurrent;
+	FQcurrent |= (FQcurrent<<8);
+	FQcurrent |= lowByteFQcurrent;
+	if (FQcurrent < FQbottom || FQcurrent > FQtop) FQcurrent = FQbottom;
+	LV23002M::LV23002M_INmode(IN1mode,reverseByte(lowByte(FQcurrent)),reverseByte(highByte(FQcurrent)),0x41);
 	LV23002M::LV23002M_INmode(IN2mode,0x57,0xA8,0x28);
+
 }
 void LV23002M::mute(){
 	LV23002M::LV23002M_INmode(IN2mode,MUTE,0xA8,0x28);
 }
 void LV23002M::readstatus(){
-	do {
-		LV23002M::LV23002M_OUTmode();
-		delay(5);
-		}
-		while ((indicators & (1 << 2)) && (~indicators & (1 << 0)));
-	LV23002M::LV23002M_INmode(IN1mode,reverseByte(lowByte(2236)),reverseByte(highByte(2236)),0x60);
+	LV23002M::LV23002M_OUTmode();
+	LV23002M::LV23002M_INmode(IN1mode,reverseByte(FQcurrent),reverseByte(FQcurrent),0x61);
 	loop_until_bit_is_clear(PINB, 4);
-	delay(5);
 	LV23002M::LV23002M_OUTmode();
 }
 void LV23002M::LV23002M_INmode(byte INmode, byte INdata1, byte INdata2, byte INdata3){

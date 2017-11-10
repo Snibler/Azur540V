@@ -1,18 +1,23 @@
 /*
  * LV23002M.h
  *
- *  Created on: 9 окт. 2017 г.
- *      Author: snibler
+ *   [Примеры расчета делителя]
+ *
+ *	1. Диапазон FM, шаг перестройки 50 кГц (DVS=1,SNS=*, вход FMIN). Частота приема FM RF = 90 МГц (IF= +10.7 МГц),
+ *	 частота гетеродина FM VCO = 100.7 МГц, PLL fref = 25 кГц (R0=1, R1=1, R2=0, R3=0).
+ *	Коэффициент, записываемый в P0..P15 равен (дополнительно делим на 2, так как работает встроенный делитель на 2):
+ *	FM VCO / (fref * 2) = 100700 / (25*2) = 2014 (07DEh).
  */
-//#include <wiring.c>
+
 #include <Arduino.h>
 #include <SPI.h>
+#include <EEPROM.h>
 
 #ifndef LV23002M_H_
 #define LV23002M_H_
 
-#define FQbottom	1964	//87.5MHz
-#define FQtop		2374	//108MHz
+#define FQbottom	9820	//87.5MHz
+#define FQtop		11870	//108MHz
 
 //defining pins to witch MEGA connected
 #define LV_CE SS		//PB2
@@ -34,8 +39,7 @@ private:
 		void LV23002M_OUTmode();
 		unsigned char reverseByte(byte data);
 public:
-		unsigned int FQ;
-		unsigned int FQcurrent;
+		word FQcurrent;
 		byte indicators;
 		unsigned long IFcounterbin;
 		void LM23002M_init();
@@ -45,6 +49,7 @@ public:
 		void playMEM();
 		void mute();
 		void readstatus();
+		void writeMEM();
 
 };
 
