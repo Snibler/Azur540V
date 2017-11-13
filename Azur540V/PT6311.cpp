@@ -182,7 +182,12 @@ void PT6311::PT6311_init(){
 void PT6311::PT6311_writeCommand(byte command){
 //digitalWrite(PT_STB, HIGH);
 	PORTC |= (1 << PC4);
-//1us
+//1.45us (1us ~ 15 nop)
+	    	_NOP();
+	    	_NOP();
+	    	_NOP();
+	    	_NOP();
+	    	_NOP();
 	    	_NOP();
 	    	_NOP();
 	    	_NOP();
@@ -211,6 +216,27 @@ void PT6311::PT6311_readKey(){
 	PT6311::PT6311_writeCommand(READ_KEY);
 //pinMode(PT_DATA, INPUT); zero to DDRx
 	DDRC &= ~(1 << PC3);
+	//1.45us
+		    	_NOP();
+		    	_NOP();
+		    	_NOP();
+		    	_NOP();
+		    	_NOP();
+		    	_NOP();
+		    	_NOP();
+		    	_NOP();
+		    	_NOP();
+		    	_NOP();
+		    	_NOP();
+		    	_NOP();
+		    	_NOP();
+		    	_NOP();
+		    	_NOP();
+		    	_NOP();
+		    	_NOP();
+		    	_NOP();
+		    	_NOP();
+		    	_NOP();
 		for (byte count = 0; count < 8; count++)
 		   {
 			if(/*digitalRead(PT_DATA)*/PINC & (1 << 3)) KeyData |= 1;

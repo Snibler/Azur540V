@@ -25,22 +25,20 @@ void LV23002M::freq_m(){
 		FQcurrent -= 10;
 		LV23002M::LV23002M_INmode(IN1mode,reverseByte(lowByte(FQcurrent)),reverseByte(highByte(FQcurrent)),0x41);
 		LV23002M::LV23002M_INmode(IN2mode,0x57,0xA8,0x28);
-	} else _NOP();
+	} else FQcurrent = FQtop;
 }
 void LV23002M::freq_p(){
 	if(FQcurrent < FQtop){
 		FQcurrent += 10;
 		LV23002M::LV23002M_INmode(IN1mode,reverseByte(lowByte(FQcurrent)),reverseByte(highByte(FQcurrent)),0x41);
 		LV23002M::LV23002M_INmode(IN2mode,0x57,0xA8,0x28);
-	} else _NOP();
+	} else FQcurrent = FQbottom;
 }
 void LV23002M::playMEM(){
-	byte highByteFQcurrent = EEPROM.read(0);
-	byte lowByteFQcurrent = EEPROM.read(1);
 	FQcurrent = 0;
-	FQcurrent |= highByteFQcurrent;
-	FQcurrent |= (FQcurrent<<8);
-	FQcurrent |= lowByteFQcurrent;
+	FQcurrent = EEPROM.read(0);
+	FQcurrent = (FQcurrent<<8);
+	FQcurrent |= EEPROM.read(1);
 	if (FQcurrent < FQbottom || FQcurrent > FQtop) FQcurrent = FQbottom;
 	LV23002M::LV23002M_INmode(IN1mode,reverseByte(lowByte(FQcurrent)),reverseByte(highByte(FQcurrent)),0x41);
 	LV23002M::LV23002M_INmode(IN2mode,0x57,0xA8,0x28);
