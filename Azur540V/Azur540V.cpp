@@ -29,32 +29,34 @@ void setup() {
 //init display
 	disp.PT6311_init();
 	disp.Display_Write(" TUNER",sizeof(" TUNER")-1, dts,RDS,ST,DOLBY,TUNED,PLAY,FM,MHz,MEM,_3D,_2dp1,_2dp2,dp1,dp2);
+	delay(2000);
 //init radio
 	radio.LM23002M_init();
-//write to radio 101.1FM "Радио Пятница"
-//	radio.LV23002M_INmode(IN1mode,reverseByte(lowByte(2236)),reverseByte(highByte(2236)),0x40);
-//	radio.LV23002M_INmode(IN2mode,0x57,0xA8,0x28);
-
-//	delay(10000);
-//write to radio 103.6FM "Радіо РОКС Україна"
-//	radio.LV23002M_INmode(IN1mode,reverseByte(lowByte(2286)),reverseByte(highByte(2286)),0x40);
+	radio.mute();
+	radio.MEMstationCurrent = EEPROM.read(0);
+	radio.playST(radio.MEMstationCurrent);
+	Freq = radio.FQcurrent-1070;
+	disp.Display_Write(toArray(Freq),7, dts,RDS,ST = true,DOLBY,TUNED = true,PLAY = true,FM = true,MHz = true,
+					MEM = true,_3D,_2dp1,_2dp2,dp1 = true,dp2);
 }
 
 void loop() {
-	delay(100);
-//	Serial.println(radio.IFcounterbin);
+	delay(200);
 	disp.PT6311_readKey();
+
 	if (disp.KeyData == FUNCTION){
-		_NOP();
+		disp.Disk_Demo();
+//		Serial.println(radio.IFcounterbin);
 	}
 	if (disp.KeyData == BAND){
-		//radio.autoscan();
-		_NOP();
+		EEPROM.write(0, radio.MEMstationCurrent);
+		disp.Disk_Demo();
 	}
 	if (disp.KeyData == TUNING_M){
 		radio.freq_m();
 		Freq = radio.FQcurrent-1070;
-		disp.Display_Write(toArray(Freq),7, dts,RDS,ST = true,DOLBY,TUNED = true,PLAY = true,FM = true,MHz = true,MEM = false,_3D,_2dp1,_2dp2,dp1 = true,dp2);
+		disp.Display_Write(toArray(Freq),7, dts,RDS,ST = true,DOLBY,TUNED = true,PLAY = true,FM = true,MHz = true,
+				MEM = false,_3D,_2dp1,_2dp2,dp1 = true,dp2);
 	}
 	if (disp.KeyData == TUNING_P){
 		radio.freq_p();
@@ -67,21 +69,21 @@ void loop() {
 		Freq = radio.FQcurrent-1070;
 		disp.Display_Write(toArray(Freq),7, dts,RDS,ST = true,DOLBY,TUNED = true,PLAY = true,FM = true,MHz = true,
 				MEM = true,_3D,_2dp1,_2dp2,dp1 = true,dp2);
+		disp.Disk_Demo();
 	}
 	if (disp.KeyData == PLAYB){
 		radio.playMEM();
 		Freq = radio.FQcurrent-1070;
 		disp.Display_Write(toArray(Freq),7, dts,RDS,ST = true,DOLBY,TUNED = true,PLAY = true,FM = true,MHz = true,
 				MEM = true,_3D,_2dp1,_2dp2,dp1 = true,dp2);
+		disp.Disk_Demo();
 	}
 	if (disp.KeyData == STOP){
 		radio.mute();
-		ST = false;
-		TUNED = false;
-		PLAY = false;
-		MEM = false;
-		dp1 = false;
-		disp.Display_Write(" MUTE",sizeof(" MUTE")-1, dts,RDS,ST,DOLBY,TUNED,PLAY,FM,MHz,MEM,_3D,_2dp1,_2dp2,dp1,dp2);
+		disp.Display_Write(" MUTE",sizeof(" MUTE")-1, dts,RDS,ST = false,DOLBY,TUNED = false,PLAY = false,FM = true,MHz = true,
+				MEM = false,_3D,_2dp1,_2dp2,dp1 = false,dp2);
+		radio.MEMstationCurrent -= 1;
+		disp.Disk_Demo();
 	}
 }
 char * toArray(word number)

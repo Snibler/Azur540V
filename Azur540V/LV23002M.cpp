@@ -12,13 +12,31 @@ void LV23002M::LM23002M_init(){
 	SPI.begin();
 	SPI.beginTransaction(SPISettings(500000, MSBFIRST, SPI_MODE0));
 	FQcurrent = FQbottom;
+	MEMstations = 30;
 }
-void LV23002M::autoscan(){
-
+void LV23002M::playST(byte MEMstationCurrent){
+	if(MEMstationCurrent != 0){
+		byte highByteAddr = MEMstationCurrent + (MEMstationCurrent - 1);
+		byte lowByteAddr = highByteAddr + 1;
+		FQcurrent = 0;
+		FQcurrent = EEPROM.read(highByteAddr);
+		FQcurrent = (FQcurrent<<8);
+		FQcurrent |= EEPROM.read(lowByteAddr);
+		if (FQcurrent < FQbottom || FQcurrent > FQtop) FQcurrent = FQbottom;
+		LV23002M::LV23002M_INmode(IN1mode,reverseByte(lowByte(FQcurrent)),reverseByte(highByte(FQcurrent)),0x41);
+		LV23002M::LV23002M_INmode(IN2mode,0x57,0xA8,0x28);
+	} else _NOP();
 }
 void LV23002M::writeMEM(){
-		EEPROM.write(0, highByte(FQcurrent));
-		EEPROM.write(1, lowByte(FQcurrent));
+	if(MEMstationCurrent < MEMstations)
+			MEMstationCurrent += 1;
+		else {
+			MEMstationCurrent = 1;
+		}
+		byte highByteAddr = MEMstationCurrent + (MEMstationCurrent - 1);
+		byte lowByteAddr = highByteAddr + 1;
+		EEPROM.write(highByteAddr, highByte(FQcurrent));
+		EEPROM.write(lowByteAddr, lowByte(FQcurrent));
 }
 void LV23002M::freq_m(){
 	if(FQcurrent > FQbottom){
@@ -35,10 +53,17 @@ void LV23002M::freq_p(){
 	} else FQcurrent = FQbottom;
 }
 void LV23002M::playMEM(){
+	if(MEMstationCurrent < MEMstations)
+		MEMstationCurrent += 1;
+	else {
+		MEMstationCurrent = 1;
+	}
+	byte highByteAddr = MEMstationCurrent + (MEMstationCurrent - 1);
+	byte lowByteAddr = highByteAddr + 1;
 	FQcurrent = 0;
-	FQcurrent = EEPROM.read(0);
+	FQcurrent = EEPROM.read(highByteAddr);
 	FQcurrent = (FQcurrent<<8);
-	FQcurrent |= EEPROM.read(1);
+	FQcurrent |= EEPROM.read(lowByteAddr);
 	if (FQcurrent < FQbottom || FQcurrent > FQtop) FQcurrent = FQbottom;
 	LV23002M::LV23002M_INmode(IN1mode,reverseByte(lowByte(FQcurrent)),reverseByte(highByte(FQcurrent)),0x41);
 	LV23002M::LV23002M_INmode(IN2mode,0x57,0xA8,0x28);
@@ -46,12 +71,6 @@ void LV23002M::playMEM(){
 }
 void LV23002M::mute(){
 	LV23002M::LV23002M_INmode(IN2mode,MUTE,0xA8,0x28);
-}
-void LV23002M::readstatus(){
-	LV23002M::LV23002M_OUTmode();
-	LV23002M::LV23002M_INmode(IN1mode,reverseByte(FQcurrent),reverseByte(FQcurrent),0x61);
-	loop_until_bit_is_clear(PINB, 4);
-	LV23002M::LV23002M_OUTmode();
 }
 void LV23002M::LV23002M_INmode(byte INmode, byte INdata1, byte INdata2, byte INdata3){
 //digitalWrite(LV_CE, LOW);
@@ -156,11 +175,13 @@ void LV23002M::LV23002M_OUTmode(){
 		_NOP();
 		_NOP();
 	SPI.endTransaction();
-	indicators = OUTdata1>>4;
-	IFcounterbin |= OUTdata1;
-	IFcounterbin = (IFcounterbin<<8)|OUTdata2;
-	IFcounterbin = (IFcounterbin<<8)|OUTdata3;
-	IFcounterbin = (IFcounterbin & 0x0FFF);
+	indicators = (OUTdata1>>4);
+	IFcounterbin = 0;
+	IFcounterbin = OUTdata1;
+	IFcounterbin = (IFcounterbin<<8);
+	IFcounterbin |= OUTdata2;
+	IFcounterbin = (IFcounterbin<<8);
+	IFcounterbin |= OUTdata3;
 }
 unsigned char LV23002M::reverseByte(byte data){
 	byte result = 0;

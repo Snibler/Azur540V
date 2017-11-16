@@ -16,8 +16,8 @@
 #ifndef LV23002M_H_
 #define LV23002M_H_
 
-#define FQbottom	9820	//87.5MHz
-#define FQtop		11870	//108MHz
+#define FQbottom	9820	//87.5MHz шаг перестройки 10 кГц
+#define FQtop		11870	//108MHz шаг перестройки 10 кГц
 
 //defining pins to witch MEGA connected
 #define LV_CE SS		//PB2
@@ -35,22 +35,22 @@
 
 class LV23002M {
 private:
+		byte MEMstations;
 		void LV23002M_INmode(byte INmode, byte INdata1, byte INdata2, byte INdata3);
 		void LV23002M_OUTmode();
 		unsigned char reverseByte(byte data);
 public:
+		byte MEMstationCurrent;
 		word FQcurrent;
 		byte indicators;
 		unsigned long IFcounterbin;
 		void LM23002M_init();
-		void autoscan();
 		void freq_m();
 		void freq_p();
 		void playMEM();
 		void mute();
-		void readstatus();
 		void writeMEM();
-
+		void playST(byte MEMstationCurrent);
 };
 
 #endif /* LV23002M_H_ */

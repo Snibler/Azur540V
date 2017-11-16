@@ -26,12 +26,19 @@ PT6311::PT6311(){
 }
 void PT6311::Disk_Demo(){
 	for (byte i = 0; i < 10; i++){
-		PT6311::PT6311_writeCommand(ADDRESS_BOTTOM|0x18);
-					PT6311::PT6311_writeData(~((Disk[i]>>8) & 0xFF) | DVD);
-				PT6311::PT6311_writeCommand(ADDRESS_BOTTOM|0x19);
-					PT6311::PT6311_writeData(~(Disk[i] & 0xFF));
-		delay(100);
+//Digit 9
+		PT6311::PT6311_writeCommand(ADDRESS9);
+					PT6311::PT6311_writeData(((Disk[i]>>8) & 0xFF) | DVD);
+				PT6311::PT6311_writeCommand(ADDRESS9 + 1);
+					PT6311::PT6311_writeData((Disk[i] & 0xFF) | MHzcode | MEMcode);
+		delay(50);
 	}
+//Digit 9
+				PT6311::PT6311_writeCommand(ADDRESS9);
+						PT6311::PT6311_writeData(((DISK_FULL>>8) & 0xFF) | DVD);
+				PT6311::PT6311_writeCommand(ADDRESS9 + 1);
+					PT6311::PT6311_writeData((DISK_FULL & 0xFF) | MHzcode | MEMcode);
+
 }
 void PT6311::Display_Write(char numbers_or_text[],byte size, bool _dts, bool _RDS, bool _ST, bool _DOLBY,
 		bool _TUNED, bool _PLAY, bool _FM, bool _MHz, bool _MEM, bool __3D, bool __2dp1, bool __2dp2, bool _dp1, bool _dp2){
@@ -150,10 +157,13 @@ byte length = size;
 			PT6311::PT6311_writeCommand(ADDRESS9);
 					PT6311::PT6311_writeData(((DISK_FULL>>8) & 0xFF) | DVD);
 				PT6311::PT6311_writeCommand(ADDRESS9 + 1);
-					if(_MEM) PT6311::PT6311_writeData((DISK_FULL & 0xFF) | MEMcode);
-					if(_MHz && __3D) PT6311::PT6311_writeData((DISK_FULL & 0xFF) | MHzcode | _3Dcode);
-					if(_MHz) PT6311::PT6311_writeData((DISK_FULL & 0xFF) | MHzcode);
-					else  PT6311::PT6311_writeData(DISK_FULL & 0xFF);
+				if(_MHz && _MEM && __3D) PT6311::PT6311_writeData((DISK_FULL & 0xFF) | MHzcode | MEMcode | _3Dcode);
+				else if(_MHz && _MEM) PT6311::PT6311_writeData((DISK_FULL & 0xFF) | MHzcode | MEMcode);
+				else if(_MHz && __3D) PT6311::PT6311_writeData((DISK_FULL & 0xFF) | MHzcode | _3Dcode);
+				else if(_MEM) PT6311::PT6311_writeData((DISK_FULL & 0xFF) | MEMcode);
+				else if(_MHz) PT6311::PT6311_writeData((DISK_FULL & 0xFF) | MHzcode);
+				else if(__3D) PT6311::PT6311_writeData((DISK_FULL & 0xFF) | _3Dcode);
+				else  PT6311::PT6311_writeData(DISK_FULL & 0xFF);
 
 	PT6311::PT6311_writeCommand(DISPLAY_MODE_9_19);
 	PT6311::PT6311_writeCommand(DISPLAY_ON_14_16);
