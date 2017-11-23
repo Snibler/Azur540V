@@ -14,4 +14,9 @@ project/Azur540V.cpp.o: ../../Azur540V.cpp ../../PT6311.h \
  ../../digits.h ../../alphabet.h ../../special.h ../../keys.h \
  ../../LV23002M.h \
  /home/snibler/.arduinocdt/packages/arduino/hardware/avr/1.6.20/libraries/SPI/src/SPI.h \
- /home/snibler/.arduinocdt/packages/arduino/hardware/avr/1.6.20/libraries/EEPROM/src/EEPROM.h
+ /home/snibler/.arduinocdt/packages/arduino/hardware/avr/1.6.20/libraries/EEPROM/src/EEPROM.h \
+ ../../BD3873FS.h \
+ /home/snibler/.arduinocdt/libraries/Encoder/1.4.1/Encoder.h \
+ /home/snibler/.arduinocdt/libraries/Encoder/1.4.1/utility/direct_pin_read.h \
+ /home/snibler/.arduinocdt/libraries/Encoder/1.4.1/utility/interrupt_pins.h \
+ /home/snibler/.arduinocdt/libraries/Encoder/1.4.1/utility/interrupt_config.h

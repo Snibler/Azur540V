@@ -13,8 +13,8 @@
 #define MEMcode	0x10
 #define kHz		0x20
 #define MHzcode	0x40
-#define s		0x01
-#define v		0x02
+#define _s		0x01
+#define _v		0x02
 #define cd		0x04
 #define MP3		0x08
 #define PAUSE	0x10

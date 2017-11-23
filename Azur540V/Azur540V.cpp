@@ -1,12 +1,19 @@
 #include "PT6311.h"
 #include "LV23002M.h"
+#include "BD3873FS.h"
+#define ENCODER_OPTIMIZE_INTERRUPTS
+#include <Encoder.h>
 
 PT6311 disp;
 LV23002M radio;
+BD3873FS vol;
+Encoder myEnc(3, 2);
 
 char * toArray(word number);
 char * numberArray = calloc(7, 1);
 word Freq;
+int position  = -999;
+int newPosition;
 
 bool dts 	= false;
 bool RDS 	= false;
@@ -25,7 +32,7 @@ bool dp2	= false;
 
 void setup() {
 //init serial for debugging
-//	Serial.begin(9600);
+	Serial.begin(9600);
 //init display
 	disp.PT6311_init();
 	disp.Display_Write(" TUNER",sizeof(" TUNER")-1, dts,RDS,ST,DOLBY,TUNED,PLAY,FM,MHz,MEM,_3D,_2dp1,_2dp2,dp1,dp2);
@@ -38,15 +45,23 @@ void setup() {
 	Freq = radio.FQcurrent-1070;
 	disp.Display_Write(toArray(Freq),7, dts,RDS,ST = true,DOLBY,TUNED = true,PLAY = true,FM = true,MHz = true,
 					MEM = true,_3D,_2dp1,_2dp2,dp1 = true,dp2);
+//init volume controller
+	vol.BD3873FS_init();
 }
 
 void loop() {
 	delay(200);
 	disp.PT6311_readKey();
 
+	newPosition = myEnc.read();
+	if(newPosition != position){
+			position = newPosition;
+			Serial.println(position);
+			}
+
 	if (disp.KeyData == FUNCTION){
 		disp.Disk_Demo();
-//		Serial.println(radio.IFcounterbin);
+
 	}
 	if (disp.KeyData == BAND){
 		EEPROM.write(0, radio.MEMstationCurrent);
@@ -86,6 +101,7 @@ void loop() {
 		disp.Disk_Demo();
 	}
 }
+
 char * toArray(word number)
     {
 		numberArray[0] = 0;
