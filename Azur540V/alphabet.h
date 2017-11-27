@@ -13,6 +13,7 @@
 #define B 0x4A65
 #define C 0x4260
 #define D 0x6030
+#define d 0x8463
 #define E 0x4261
 #define F 0x4221
 #define G 0xC262

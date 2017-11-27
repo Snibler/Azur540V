@@ -46,4 +46,10 @@
 #define DISK9		0xBE07
 #define DISK10		0x7E07
 
+#define vol1	0x4020
+#define vol2	0x5028
+#define vol3	0x542A
+
+#define MINUS	0x8001
+
 #endif /* SPECIAL_H_ */

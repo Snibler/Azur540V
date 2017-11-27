@@ -12,8 +12,12 @@ Encoder myEnc(3, 2);
 char * toArray(word number);
 char * numberArray = calloc(7, 1);
 word Freq;
-int position  = -999;
+int position  = 0;
 int newPosition;
+unsigned long currentMillis;
+unsigned long previousMillis = 0;
+#define INTERVAL 3000
+byte Function_switch = 0;
 
 bool dts 	= false;
 bool RDS 	= false;
@@ -51,15 +55,85 @@ void setup() {
 
 void loop() {
 	delay(200);
+//read buttons status
 	disp.PT6311_readKey();
-
-	newPosition = myEnc.read();
-	if(newPosition != position){
-			position = newPosition;
-			Serial.println(position);
-			}
-
+//return display current station after interval
+	currentMillis = millis();
+	if ((currentMillis - previousMillis) > INTERVAL){
+		previousMillis = currentMillis;
+		Freq = radio.FQcurrent-1070;
+		disp.Display_Write(toArray(Freq),7, dts,RDS,ST = true,DOLBY,TUNED = true,PLAY = true,FM = true,MHz = true,
+						MEM = true,_3D,_2dp1,_2dp2,dp1 = true,dp2);
+	}
+//Function_switch
+	switch(Function_switch){
+			case 0:
+				//scan enconer position
+					newPosition = myEnc.read();
+					if(newPosition != position){
+							position = newPosition;
+							vol.volume_control(position);
+							disp.Display_Write("VOL",sizeof("VOL")-1, dts,RDS,ST = true,DOLBY,TUNED = true,PLAY = true,FM = true,MHz = true,
+											MEM = false,_3D,_2dp1,_2dp2,dp1 = false,dp2);
+							previousMillis = millis();
+							}
+				break;
+			case 1:
+				disp.Display_Write("BAS",sizeof("BAS")-1, dts,RDS,ST = true,DOLBY,TUNED = true,PLAY = true,FM = true,MHz = true,
+										MEM = false,_3D,_2dp1,_2dp2,dp1 = false,dp2);
+				//scan enconer position
+					newPosition = myEnc.read();
+					if(newPosition != position){
+							position = newPosition;
+							vol.bass_control(position);
+							disp.Display_Write("BAS",sizeof("BAS")-1, dts,RDS,ST = true,DOLBY,TUNED = true,PLAY = true,FM = true,MHz = true,
+											MEM = false,_3D,_2dp1,_2dp2,dp1 = false,dp2);
+				//			previousMillis = millis();
+							}
+				break;
+			case 2:
+				disp.Display_Write("TRE",sizeof("TRE")-1, dts,RDS,ST = true,DOLBY,TUNED = true,PLAY = true,FM = true,MHz = true,
+											MEM = false,_3D,_2dp1,_2dp2,dp1 = false,dp2);
+				//scan enconer position
+					newPosition = myEnc.read();
+					if(newPosition != position){
+							position = newPosition;
+							vol.treble_control(position);
+							disp.Display_Write("TRE",sizeof("TRE")-1, dts,RDS,ST = true,DOLBY,TUNED = true,PLAY = true,FM = true,MHz = true,
+											MEM = false,_3D,_2dp1,_2dp2,dp1 = false,dp2);
+				//			previousMillis = millis();
+							}
+				break;
+			case 3:
+				disp.Display_Write("SUR",sizeof("SUR")-1, dts,RDS,ST = true,DOLBY,TUNED = true,PLAY = true,FM = true,MHz = true,
+											MEM = false,_3D,_2dp1,_2dp2,dp1 = false,dp2);
+				//scan enconer position
+					newPosition = myEnc.read();
+					if(newPosition != position){
+							position = newPosition;
+							vol.surr_control(position);
+							disp.Display_Write("SUR",sizeof("SUR")-1, dts,RDS,ST = true,DOLBY,TUNED = true,PLAY = true,FM = true,MHz = true,
+											MEM = false,_3D,_2dp1,_2dp2,dp1 = false,dp2);
+				//			previousMillis = millis();
+							}
+				break;
+			case 4:
+				disp.Display_Write("AUX",sizeof("AUX")-1, dts,RDS,ST = true,DOLBY,TUNED = true,PLAY = true,FM = true,MHz = true,
+											MEM = false,_3D,_2dp1,_2dp2,dp1 = false,dp2);
+				newPosition = myEnc.read();
+				if(newPosition != position){
+						position = newPosition;
+						vol.input_control(position);
+						disp.Display_Write("AUX",sizeof("AUX")-1, dts,RDS,ST = true,DOLBY,TUNED = true,PLAY = true,FM = true,MHz = true,
+										MEM = false,_3D,_2dp1,_2dp2,dp1 = false,dp2);
+				//			previousMillis = millis();
+				}
+				break;
+	}
+//button functions
 	if (disp.KeyData == FUNCTION){
+		if(Function_switch < 4) Function_switch++;
+		else Function_switch = 0;
 		disp.Disk_Demo();
 
 	}
