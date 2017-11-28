@@ -317,7 +317,9 @@ void PT6311::PT6311_writeByte(byte data){
 word converter(char symbol){
 	word result = 0;
 	if(symbol == 32) result = sp;
-	if(symbol == 39) result = vol1;
+	if(symbol == 35) result = vol1;//#
+	if(symbol == 36) result = vol2;//$
+	if(symbol == 37) result = vol3;//%
 	if(symbol == 45) result = MINUS;
 //	if(symbol == 46) result = dpcode;
 	if(symbol == 48) result = ZERO;

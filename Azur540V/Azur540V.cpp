@@ -73,7 +73,7 @@ void loop() {
 					if(newPosition != position){
 							position = newPosition;
 							vol.volume_control(position);
-							disp.Display_Write("VOL",sizeof("VOL")-1, dts,RDS,ST = true,DOLBY,TUNED = true,PLAY = true,FM = true,MHz = true,
+							disp.Display_Write(vol.toArray("VOL"),7, dts,RDS,ST = true,DOLBY,TUNED = true,PLAY = true,FM = true,MHz = true,
 											MEM = false,_3D,_2dp1,_2dp2,dp1 = false,dp2);
 							previousMillis = millis();
 							}

@@ -28,24 +28,20 @@
 #define SURR_ON		0x20
 #define SURR_OFF	0x00
 
-#define VOL_A_0dB		0x00
-#define VOL_A_O_0dB		0x3E0
-#define VOL_A_87dB		0x3C0
-#define VOL_A_mid		0x100
-#define VOL_A_step_1dB	0x20
-
-#define VOL_B_0		0x00
-#define VOL_B_1		0x08
-#define VOL_B_2		0x10
-#define VOL_B_3		0x18
+#define VOL_0dB			0x00
+#define VOL_step_dB		0x08
+#define VOL_step_1dB	0x10
+#define VOL_87dB		0x3F8
 
 #define BASS_0dB		0x00
 #define BASS_14dB		0x3C0
-#define BASS_step_2dB	0x40
+#define BASS_step_1dB	0x40
+#define BASS_step_2dB	0x80
 
 #define TREBLE_0dB		0x00
 #define TREBLE_12dB		0x3C
-#define TREBLE_step_2dB	0x04
+#define TREBLE_step_1dB	0x04
+#define TREBLE_step_2dB	0x08
 
 class BD3873FS {
 private:
@@ -66,6 +62,7 @@ private:
 	void treble_up();
 	void treble_down();
 public:
+	char * dispArray;
 	BD3873FS();
 	void BD3873FS_init();
 	void volume_control(int position);
@@ -73,6 +70,7 @@ public:
 	void treble_control(int position);
 	void surr_control(int position);
 	void input_control(int position);
+	char * toArray(char name[4]);
 };
 
 #endif /* BD3873FS_H_ */

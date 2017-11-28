@@ -9,13 +9,14 @@
 BD3873FS::BD3873FS(){
 	addr_data_10bits = 0;
 	last_vposition = 0;
-	last_volume = VOL_A_mid;
+	last_volume = 0x108;
 	last_bposition = 0;
 	last_bass = BASS_0dB;
 	last_tposition = 0;
 	last_treble = TREBLE_0dB;
 	last_sposition = 0;
 	last_iposition = 0;
+	dispArray = calloc(7, 1);
 	pinMode(BD_CLK, OUTPUT);
 	pinMode(BD_DATA, OUTPUT);
 	digitalWrite(BD_CLK, LOW);
@@ -24,14 +25,14 @@ BD3873FS::BD3873FS(){
 void BD3873FS::BD3873FS_init(){
 	addr_data_10bits = INPUT_B | INPUT_GAIN_18dB | SURR_OFF | INPUT_SURR_addr;
 	BD3873FS::write_10bits_to_chip(addr_data_10bits);
-	addr_data_10bits = VOL_A_87dB | VOL_B_0 | VOL_addr;
+	addr_data_10bits = VOL_87dB | VOL_addr;
 	BD3873FS::write_10bits_to_chip(addr_data_10bits);
 	addr_data_10bits = BASS_0dB | TREBLE_0dB | BASS_TREBLE_addr;
 	BD3873FS::write_10bits_to_chip(addr_data_10bits);
 	addr_data_10bits = 0x03;
 	BD3873FS::write_10bits_to_chip(addr_data_10bits);
 
-	addr_data_10bits = VOL_A_mid | VOL_B_0 | VOL_addr;
+	addr_data_10bits = last_volume | VOL_addr;
 	BD3873FS::write_10bits_to_chip(addr_data_10bits);
 	addr_data_10bits = BASS_0dB | TREBLE_0dB | BASS_TREBLE_addr;
 	BD3873FS::write_10bits_to_chip(addr_data_10bits);
@@ -62,25 +63,34 @@ void BD3873FS::volume_control(int position){
 	if(position > last_vposition) volume_up();
 	else if(position < last_vposition) volume_down();
 	last_vposition = position;
-	Serial.println(last_volume, HEX);
-	Serial.println(last_bass, HEX);
-	Serial.println(last_treble, HEX);
 }
 void BD3873FS::volume_up(){
-	if(last_volume > 0){
-		word volume = last_volume - VOL_A_step_1dB;
+	if(last_volume > 0 && last_volume > VOL_step_dB){
+		word volume = last_volume - VOL_step_1dB;
 		addr_data_10bits = volume | VOL_addr;
 		BD3873FS::write_10bits_to_chip(addr_data_10bits);
 		last_volume = volume;
-		} else _NOP();
+		} else if(last_volume == VOL_step_dB){
+			word volume = last_volume - VOL_step_dB;
+			addr_data_10bits = volume | VOL_addr;
+			BD3873FS::write_10bits_to_chip(addr_data_10bits);
+			last_volume = volume;
+		}
+		else _NOP();
 }
 void BD3873FS::volume_down(){
-	if(last_volume < VOL_A_O_0dB){
-		word volume = last_volume + VOL_A_step_1dB;
+	if(last_volume < VOL_87dB && last_volume >= VOL_step_dB){
+		word volume = last_volume + VOL_step_1dB;
 		addr_data_10bits = volume | VOL_addr;
 		BD3873FS::write_10bits_to_chip(addr_data_10bits);
 		last_volume = volume;
-		} else _NOP();
+		} else if(last_volume == 0){
+			word volume = last_volume + VOL_step_dB;
+			addr_data_10bits = volume | VOL_addr;
+			BD3873FS::write_10bits_to_chip(addr_data_10bits);
+			last_volume = volume;
+		}
+		else _NOP();
 }
 void BD3873FS::bass_control(int position){
 	if(position > last_bposition) bass_up();
@@ -88,25 +98,34 @@ void BD3873FS::bass_control(int position){
 		last_bposition = position;
 		addr_data_10bits = last_volume | VOL_addr;
 		BD3873FS::write_10bits_to_chip(addr_data_10bits);
-		Serial.println(last_volume, HEX);
-		Serial.println(last_bass, HEX);
-		Serial.println(last_treble, HEX);
 }
 void BD3873FS::bass_up(){
-	if(last_bass < BASS_14dB){
+	if(last_bass < BASS_14dB && last_bass >= BASS_step_1dB){
 			word bass = last_bass + BASS_step_2dB;
 			addr_data_10bits = bass | last_treble | BASS_TREBLE_addr;
 			BD3873FS::write_10bits_to_chip(addr_data_10bits);
 			last_bass = bass;
-			} else _NOP();
+			} else if(last_bass == 0){
+				word bass = last_bass + BASS_step_1dB;
+				addr_data_10bits = bass | last_treble | BASS_TREBLE_addr;
+				BD3873FS::write_10bits_to_chip(addr_data_10bits);
+				last_bass = bass;
+			}
+			else _NOP();
 }
 void BD3873FS::bass_down(){
-	if(last_bass > 0){
+	if(last_bass > 0 && last_bass > BASS_step_1dB){
 			word bass = last_bass - BASS_step_2dB;
 			addr_data_10bits = bass | last_treble | BASS_TREBLE_addr;
 			BD3873FS::write_10bits_to_chip(addr_data_10bits);
 			last_bass = bass;
-			} else _NOP();
+			} else if(last_bass == BASS_step_1dB){
+				word bass = last_bass - BASS_step_1dB;
+				addr_data_10bits = bass | last_treble | BASS_TREBLE_addr;
+				BD3873FS::write_10bits_to_chip(addr_data_10bits);
+				last_bass = bass;
+			}
+			else _NOP();
 }
 void BD3873FS::treble_control(int position){
 	if(position > last_tposition) treble_up();
@@ -114,25 +133,70 @@ void BD3873FS::treble_control(int position){
 		last_tposition = position;
 		addr_data_10bits = last_volume | VOL_addr;
 		BD3873FS::write_10bits_to_chip(addr_data_10bits);
-		Serial.println(last_volume, HEX);
-		Serial.println(last_bass, HEX);
-		Serial.println(last_treble, HEX);
 }
 void BD3873FS::treble_up(){
-	if(last_treble < TREBLE_12dB){
+	if(last_treble < TREBLE_12dB && last_treble >= TREBLE_step_1dB){
 			word treble = last_treble + TREBLE_step_2dB;
 			addr_data_10bits = last_bass | treble | BASS_TREBLE_addr;
 			BD3873FS::write_10bits_to_chip(addr_data_10bits);
 			last_treble = treble;
-			} else _NOP();
+			} else if(last_treble == 0){
+				word treble = last_treble + TREBLE_step_1dB;
+				addr_data_10bits = last_bass | treble | BASS_TREBLE_addr;
+				BD3873FS::write_10bits_to_chip(addr_data_10bits);
+				last_treble = treble;
+			}
+			else _NOP();
 }
 void BD3873FS::treble_down(){
-	if(last_treble > 0){
+	if(last_treble > 0 && last_treble > TREBLE_step_1dB){
 			word treble = last_treble - TREBLE_step_2dB;
 			addr_data_10bits = last_bass | treble | BASS_TREBLE_addr;
 			BD3873FS::write_10bits_to_chip(addr_data_10bits);
 			last_treble = treble;
-			} else _NOP();
+			} else if(last_treble == TREBLE_step_1dB){
+				word treble = last_treble - TREBLE_step_1dB;
+				addr_data_10bits = last_bass | treble | BASS_TREBLE_addr;
+				BD3873FS::write_10bits_to_chip(addr_data_10bits);
+				last_treble = treble;
+			}
+			else _NOP();
+}
+char * BD3873FS::toArray(char name[4]){
+	dispArray[0] = name[0];
+	dispArray[1] = name[1];
+	dispArray[2] = name[2];
+	if(name[0] == 'V'){
+		byte bars = 12 - last_volume/0x54;
+		for(byte i = 0; i < 4; i++){
+			if(bars == 0){
+				dispArray[3 + i] = 0;
+			} else if(bars < 3){
+				if(bars == 2){
+					dispArray[3 + i] = '$';
+					bars -= 2;
+				} else if(bars == 1){
+					dispArray[3 + i] = '#';
+					bars -= 1;
+				}
+			} else if(bars > 3 && bars % 3 != 0){
+				dispArray[3 + i] = '%';
+				bars -= 3;
+			} else if(bars % 3 == 0){
+				dispArray[3 + i] = '%';
+				bars -= 3;
+			}
+		}
+	} else if(name[0] == 'B'){
+
+	} else if(name[0] == 'T'){
+
+	} else if(name[0] == 'S'){
+
+	} else if(name[0] == 'A'){
+
+	}
+	return dispArray;
 }
 void BD3873FS::write_10bits_to_chip(word data){
 	for (byte count = 0; count < 10; count++)
