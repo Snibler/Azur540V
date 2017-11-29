@@ -7,6 +7,8 @@
 #include "BD3873FS.h"
 
 BD3873FS::BD3873FS(){
+	state_sur = false;
+	state_inp = false;
 	addr_data_10bits = 0;
 	last_vposition = 0;
 	last_volume = 0x108;
@@ -38,10 +40,9 @@ void BD3873FS::BD3873FS_init(){
 	BD3873FS::write_10bits_to_chip(addr_data_10bits);
 }
 void BD3873FS::input_control(int position){
-	bool state;
-	if(position > last_iposition) state = true;
-		else if(position < last_iposition) state = false;
-	if(state) addr_data_10bits = INPUT_A | INPUT_GAIN_18dB | SURR_OFF | INPUT_SURR_addr;
+	if(position > last_iposition) state_inp = true;
+		else if(position < last_iposition) state_inp = false;
+	if(state_inp) addr_data_10bits = INPUT_A | INPUT_GAIN_18dB | SURR_OFF | INPUT_SURR_addr;
 	else addr_data_10bits = INPUT_B | INPUT_GAIN_18dB | SURR_OFF | INPUT_SURR_addr;
 	BD3873FS::write_10bits_to_chip(addr_data_10bits);
 	addr_data_10bits = last_volume | VOL_addr;
@@ -49,10 +50,9 @@ void BD3873FS::input_control(int position){
 	last_iposition = position;
 }
 void BD3873FS::surr_control(int position){
-	bool state;
-	if(position > last_sposition) state = true;
-		else if(position < last_sposition) state = false;
-	if(state) addr_data_10bits = INPUT_B | INPUT_GAIN_18dB | SURR_ON | INPUT_SURR_addr;
+	if(position > last_sposition) state_sur = true;
+		else if(position < last_sposition) state_sur = false;
+	if(state_sur) addr_data_10bits = INPUT_B | INPUT_GAIN_18dB | SURR_ON | INPUT_SURR_addr;
 	else addr_data_10bits = INPUT_B | INPUT_GAIN_18dB | SURR_OFF | INPUT_SURR_addr;
 	BD3873FS::write_10bits_to_chip(addr_data_10bits);
 	addr_data_10bits = last_volume | VOL_addr;
@@ -188,13 +188,53 @@ char * BD3873FS::toArray(char name[4]){
 			}
 		}
 	} else if(name[0] == 'B'){
-
+		byte numb = last_bass/0x80;
+		if(numb == 0) 		{dispArray[3] = 0;  dispArray[4] = '0';}
+		else if(numb == 1) 	{dispArray[3] = 0;  dispArray[4] = '2';}
+		else if(numb == 2) 	{dispArray[3] = 0;  dispArray[4] = '4';}
+		else if(numb == 3) 	{dispArray[3] = 0;  dispArray[4] = '6';}
+		else if(numb == 4) 	{dispArray[3] = 0;  dispArray[4] = '8';}
+		else if(numb == 5) {dispArray[3] = '1';dispArray[4] = '0';}
+		else if(numb == 6) {dispArray[3] = '1';dispArray[4] = '2';}
+		else if(numb == 7) {dispArray[3] = '1';dispArray[4] = '4';}
+		dispArray[5] = 'd';
+		dispArray[6] = 'B';
 	} else if(name[0] == 'T'){
-
+		byte numb = last_treble/0x08;
+					 if(numb == 0) 	{dispArray[3] = 0;  dispArray[4] = '0';}
+				else if(numb == 1) 	{dispArray[3] = 0;  dispArray[4] = '2';}
+				else if(numb == 2) 	{dispArray[3] = 0;  dispArray[4] = '4';}
+				else if(numb == 3) 	{dispArray[3] = 0;  dispArray[4] = '6';}
+				else if(numb == 4) 	{dispArray[3] = 0;  dispArray[4] = '8';}
+				else if(numb == 5) {dispArray[3] = '1';dispArray[4] = '0';}
+				else if(numb == 6) {dispArray[3] = '1';dispArray[4] = '2';}
+				else if(numb == 7) {dispArray[3] = '1';dispArray[4] = '2';}
+				dispArray[5] = 'd';
+				dispArray[6] = 'B';
 	} else if(name[0] == 'S'){
-
+		if(state_sur) {
+			dispArray[3] = 0;
+			dispArray[4] = 'O';
+			dispArray[5] = 'N';
+			dispArray[6] = 0;
+		} else {
+			dispArray[3] = 0;
+			dispArray[4] = 'O';
+			dispArray[5] = 'F';
+			dispArray[6] = 'F';
+		}
 	} else if(name[0] == 'A'){
-
+		if(state_inp) {
+					dispArray[3] = 0;
+					dispArray[4] = 'I';
+					dispArray[5] = 'N';
+					dispArray[6] = 0;
+				} else {
+					dispArray[3] = 0;
+					dispArray[4] = 'F';
+					dispArray[5] = 'M';
+					dispArray[6] = 0;
+				}
 	}
 	return dispArray;
 }

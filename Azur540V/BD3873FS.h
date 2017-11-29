@@ -45,6 +45,8 @@
 
 class BD3873FS {
 private:
+	bool state_sur;
+	bool state_inp;
 	word addr_data_10bits;
 	int last_vposition;
 	word last_volume;

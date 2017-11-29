@@ -19,4 +19,8 @@ project/Azur540V.cpp.o: ../../Azur540V.cpp ../../PT6311.h \
  /home/snibler/.arduinocdt/libraries/Encoder/1.4.1/Encoder.h \
  /home/snibler/.arduinocdt/libraries/Encoder/1.4.1/utility/direct_pin_read.h \
  /home/snibler/.arduinocdt/libraries/Encoder/1.4.1/utility/interrupt_pins.h \
- /home/snibler/.arduinocdt/libraries/Encoder/1.4.1/utility/interrupt_config.h
+ /home/snibler/.arduinocdt/libraries/Encoder/1.4.1/utility/interrupt_config.h \
+ /home/snibler/.arduinocdt/libraries/IRremote/2.2.3/IRremote.h \
+ /home/snibler/.arduinocdt/libraries/IRremote/2.2.3/IRremoteInt.h \
+ /home/snibler/.arduinocdt/libraries/IRremote/2.2.3/boarddefs.h \
+ ../../IRremoteCodes.h

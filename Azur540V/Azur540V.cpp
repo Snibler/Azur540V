@@ -3,11 +3,17 @@
 #include "BD3873FS.h"
 #define ENCODER_OPTIMIZE_INTERRUPTS
 #include <Encoder.h>
+#include <IRremote.h>
+#include "IRremoteCodes.h"
 
 PT6311 disp;
 LV23002M radio;
 BD3873FS vol;
 Encoder myEnc(3, 2);
+
+#define RECV_PIN 7
+IRrecv irrecv(RECV_PIN);
+decode_results results;
 
 char * toArray(word number);
 char * numberArray = calloc(7, 1);
@@ -51,6 +57,8 @@ void setup() {
 					MEM = true,_3D,_2dp1,_2dp2,dp1 = true,dp2);
 //init volume controller
 	vol.BD3873FS_init();
+// Start the receiver
+	irrecv.enableIRIn();
 }
 
 void loop() {
@@ -79,52 +87,52 @@ void loop() {
 							}
 				break;
 			case 1:
-				disp.Display_Write("BAS",sizeof("BAS")-1, dts,RDS,ST = true,DOLBY,TUNED = true,PLAY = true,FM = true,MHz = true,
+				disp.Display_Write(vol.toArray("BAS"),7, dts,RDS,ST = true,DOLBY,TUNED = true,PLAY = true,FM = true,MHz = true,
 										MEM = false,_3D,_2dp1,_2dp2,dp1 = false,dp2);
 				//scan enconer position
 					newPosition = myEnc.read();
 					if(newPosition != position){
 							position = newPosition;
 							vol.bass_control(position);
-							disp.Display_Write("BAS",sizeof("BAS")-1, dts,RDS,ST = true,DOLBY,TUNED = true,PLAY = true,FM = true,MHz = true,
+							disp.Display_Write(vol.toArray("BAS"),7, dts,RDS,ST = true,DOLBY,TUNED = true,PLAY = true,FM = true,MHz = true,
 											MEM = false,_3D,_2dp1,_2dp2,dp1 = false,dp2);
 				//			previousMillis = millis();
 							}
 				break;
 			case 2:
-				disp.Display_Write("TRE",sizeof("TRE")-1, dts,RDS,ST = true,DOLBY,TUNED = true,PLAY = true,FM = true,MHz = true,
+				disp.Display_Write(vol.toArray("TRE"),7, dts,RDS,ST = true,DOLBY,TUNED = true,PLAY = true,FM = true,MHz = true,
 											MEM = false,_3D,_2dp1,_2dp2,dp1 = false,dp2);
 				//scan enconer position
 					newPosition = myEnc.read();
 					if(newPosition != position){
 							position = newPosition;
 							vol.treble_control(position);
-							disp.Display_Write("TRE",sizeof("TRE")-1, dts,RDS,ST = true,DOLBY,TUNED = true,PLAY = true,FM = true,MHz = true,
+							disp.Display_Write(vol.toArray("TRE"),7, dts,RDS,ST = true,DOLBY,TUNED = true,PLAY = true,FM = true,MHz = true,
 											MEM = false,_3D,_2dp1,_2dp2,dp1 = false,dp2);
 				//			previousMillis = millis();
 							}
 				break;
 			case 3:
-				disp.Display_Write("SUR",sizeof("SUR")-1, dts,RDS,ST = true,DOLBY,TUNED = true,PLAY = true,FM = true,MHz = true,
+				disp.Display_Write(vol.toArray("SUR"),7, dts,RDS,ST = true,DOLBY,TUNED = true,PLAY = true,FM = true,MHz = true,
 											MEM = false,_3D,_2dp1,_2dp2,dp1 = false,dp2);
 				//scan enconer position
 					newPosition = myEnc.read();
 					if(newPosition != position){
 							position = newPosition;
 							vol.surr_control(position);
-							disp.Display_Write("SUR",sizeof("SUR")-1, dts,RDS,ST = true,DOLBY,TUNED = true,PLAY = true,FM = true,MHz = true,
+							disp.Display_Write(vol.toArray("SUR"),7, dts,RDS,ST = true,DOLBY,TUNED = true,PLAY = true,FM = true,MHz = true,
 											MEM = false,_3D,_2dp1,_2dp2,dp1 = false,dp2);
 				//			previousMillis = millis();
 							}
 				break;
 			case 4:
-				disp.Display_Write("AUX",sizeof("AUX")-1, dts,RDS,ST = true,DOLBY,TUNED = true,PLAY = true,FM = true,MHz = true,
+				disp.Display_Write(vol.toArray("AUX"),7, dts,RDS,ST = true,DOLBY,TUNED = true,PLAY = true,FM = true,MHz = true,
 											MEM = false,_3D,_2dp1,_2dp2,dp1 = false,dp2);
 				newPosition = myEnc.read();
 				if(newPosition != position){
 						position = newPosition;
 						vol.input_control(position);
-						disp.Display_Write("AUX",sizeof("AUX")-1, dts,RDS,ST = true,DOLBY,TUNED = true,PLAY = true,FM = true,MHz = true,
+						disp.Display_Write(vol.toArray("AUX"),7, dts,RDS,ST = true,DOLBY,TUNED = true,PLAY = true,FM = true,MHz = true,
 										MEM = false,_3D,_2dp1,_2dp2,dp1 = false,dp2);
 				//			previousMillis = millis();
 				}
@@ -174,8 +182,13 @@ void loop() {
 		radio.MEMstationCurrent -= 1;
 		disp.Disk_Demo();
 	}
-}
 
+	if (irrecv.decode(&results)) {
+	    Serial.println(results.value, HEX);
+	    irrecv.resume(); // Receive the next value
+	  }
+}
+//number to char array converter
 char * toArray(word number)
     {
 		numberArray[0] = 0;
