@@ -56,6 +56,7 @@ private:
 	word last_treble;
 	int last_sposition;
 	int last_iposition;
+	word current_input;
 	void write_10bits_to_chip(word data);
 	void volume_up();
 	void volume_down();

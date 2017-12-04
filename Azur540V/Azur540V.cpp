@@ -15,6 +15,9 @@ Encoder myEnc(3, 2);
 IRrecv irrecv(RECV_PIN);
 decode_results results;
 
+#define AMP_MUTE 6
+#define DEL		 10
+
 char * toArray(word number);
 char * numberArray = calloc(7, 1);
 word Freq;
@@ -47,6 +50,8 @@ bool dp2	= false;
 void setup() {
 //init serial for debugging
 //	Serial.begin(9600);
+	pinMode(AMP_MUTE, OUTPUT);
+	digitalWrite(AMP_MUTE, HIGH);
 //init display
 	disp.PT6311_init();
 	disp.Display_Write(" TUNER",sizeof(" TUNER")-1, dts,RDS,ST,DOLBY,TUNED,PLAY,FM,MHz,MEM,_3D,_2dp1,_2dp2,dp1,dp2);
@@ -63,6 +68,7 @@ void setup() {
 	vol.BD3873FS_init();
 // Start the receiver
 	irrecv.enableIRIn();
+	digitalWrite(AMP_MUTE, LOW);
 }
 
 void loop() {
@@ -90,10 +96,13 @@ void loop() {
 					newPosition = myEnc.read();
 					if(newPosition != position){
 							position = newPosition;
+							digitalWrite(AMP_MUTE, HIGH);
 							vol.volume_control(position);
 							disp.Display_Write(vol.toArray("VOL"),7, dts,RDS,ST = true,DOLBY,TUNED = true,PLAY = true,FM = true,MHz = true,
 											MEM = false,_3D,_2dp1,_2dp2,dp1 = false,dp2);
 							previousMillis = millis();
+							delay(DEL);
+							digitalWrite(AMP_MUTE, LOW);
 							}
 				break;
 			case 1:
@@ -103,10 +112,12 @@ void loop() {
 					newPosition = myEnc.read();
 					if(newPosition != position){
 							position = newPosition;
+							digitalWrite(AMP_MUTE, HIGH);
 							vol.bass_control(position);
 							disp.Display_Write(vol.toArray("BAS"),7, dts,RDS,ST = true,DOLBY,TUNED = true,PLAY = true,FM = true,MHz = true,
 											MEM = false,_3D,_2dp1,_2dp2,dp1 = false,dp2);
-				//			previousMillis = millis();
+							delay(DEL);
+							digitalWrite(AMP_MUTE, LOW);
 							}
 				break;
 			case 2:
@@ -116,10 +127,12 @@ void loop() {
 					newPosition = myEnc.read();
 					if(newPosition != position){
 							position = newPosition;
+							digitalWrite(AMP_MUTE, HIGH);
 							vol.treble_control(position);
 							disp.Display_Write(vol.toArray("TRE"),7, dts,RDS,ST = true,DOLBY,TUNED = true,PLAY = true,FM = true,MHz = true,
 											MEM = false,_3D,_2dp1,_2dp2,dp1 = false,dp2);
-				//			previousMillis = millis();
+							delay(DEL);
+							digitalWrite(AMP_MUTE, LOW);
 							}
 				break;
 			case 3:
@@ -129,10 +142,12 @@ void loop() {
 					newPosition = myEnc.read();
 					if(newPosition != position){
 							position = newPosition;
+							digitalWrite(AMP_MUTE, HIGH);
 							vol.surr_control(position);
 							disp.Display_Write(vol.toArray("SUR"),7, dts,RDS,ST = true,DOLBY,TUNED = true,PLAY = true,FM = true,MHz = true,
 											MEM = false,_3D,_2dp1,_2dp2,dp1 = false,dp2);
-				//			previousMillis = millis();
+							delay(DEL);
+							digitalWrite(AMP_MUTE, LOW);
 							}
 				break;
 			case 4:
@@ -141,10 +156,12 @@ void loop() {
 				newPosition = myEnc.read();
 				if(newPosition != position){
 						position = newPosition;
+						digitalWrite(AMP_MUTE, HIGH);
 						vol.input_control(position);
 						disp.Display_Write(vol.toArray("AUX"),7, dts,RDS,ST = true,DOLBY,TUNED = true,PLAY = true,FM = true,MHz = true,
 										MEM = false,_3D,_2dp1,_2dp2,dp1 = false,dp2);
-				//			previousMillis = millis();
+						delay(DEL);
+						digitalWrite(AMP_MUTE, LOW);
 				}
 				break;
 	}
@@ -212,9 +229,11 @@ void loop() {
 			Freq = radio.FQcurrent-1070;
 			disp.Display_Write(toArray(Freq),7, dts,RDS,ST = true,DOLBY,TUNED = true,PLAY = true,FM = true,MHz = true,
 							MEM = true,_3D,_2dp1,_2dp2,dp1 = true,dp2);
+			digitalWrite(AMP_MUTE, LOW);
 		}
 		else {
-			radio.mute();
+			digitalWrite(AMP_MUTE, HIGH);
+//			radio.mute();
 			mute_state = true;
 			disp.Display_Write(" MUTE",sizeof(" MUTE")-1, dts,RDS,ST = false,DOLBY,TUNED = false,PLAY = false,FM = true,MHz = true,
 							MEM = false,_3D,_2dp1,_2dp2,dp1 = false,dp2);
@@ -226,18 +245,24 @@ void loop() {
 		irrecv.resume();
 		ir_state = false;
 		position_ir ++;
+		digitalWrite(AMP_MUTE, HIGH);
 		vol.volume_control(position_ir);
 		disp.Display_Write(vol.toArray("VOL"),7, dts,RDS,ST = true,DOLBY,TUNED = true,PLAY = true,FM = true,MHz = true,
 							MEM = false,_3D,_2dp1,_2dp2,dp1 = false,dp2);
+		delay(DEL);
+		digitalWrite(AMP_MUTE, LOW);
 		disp.Disk_Demo();
 	}
 	if (ir_state && results.value == VOL_DOWN_IR){
 		irrecv.resume();
 		ir_state = false;
 		position_ir --;
+		digitalWrite(AMP_MUTE, HIGH);
 		vol.volume_control(position_ir);
 		disp.Display_Write(vol.toArray("VOL"),7, dts,RDS,ST = true,DOLBY,TUNED = true,PLAY = true,FM = true,MHz = true,
 							MEM = false,_3D,_2dp1,_2dp2,dp1 = false,dp2);
+		delay(DEL);
+		digitalWrite(AMP_MUTE, LOW);
 		disp.Disk_Demo();
 	}
 	if (ir_state && results.value == STEREO_SUR_IR){
@@ -251,10 +276,13 @@ void loop() {
 			position_ir --;
 			surr_state = false;
 		}
+		digitalWrite(AMP_MUTE, HIGH);
 		vol.surr_control(position_ir);
 		disp.Display_Write(vol.toArray("SUR"),7, dts,RDS,ST = true,DOLBY,TUNED = true,PLAY = true,FM = true,MHz = true,
 							MEM = false,_3D,_2dp1,_2dp2,dp1 = false,dp2);
 		previousMillis = millis();
+		delay(DEL);
+		digitalWrite(AMP_MUTE, LOW);
 		disp.Disk_Demo();
 	}
 	if (ir_state && results.value == SOURCE_IR){
@@ -268,10 +296,13 @@ void loop() {
 					position_ir --;
 					source_state = false;
 				}
+		digitalWrite(AMP_MUTE, HIGH);
 		vol.input_control(position_ir);
 		disp.Display_Write(vol.toArray("AUX"),7, dts,RDS,ST = true,DOLBY,TUNED = true,PLAY = true,FM = true,MHz = true,
 							MEM = false,_3D,_2dp1,_2dp2,dp1 = false,dp2);
 		previousMillis = millis();
+		delay(DEL);
+		digitalWrite(AMP_MUTE, LOW);
 		disp.Disk_Demo();
 	}
 }

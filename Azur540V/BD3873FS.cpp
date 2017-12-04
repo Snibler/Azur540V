@@ -7,11 +7,12 @@
 #include "BD3873FS.h"
 
 BD3873FS::BD3873FS(){
+	current_input = INPUT_B;
 	state_sur = false;
 	state_inp = false;
 	addr_data_10bits = 0;
 	last_vposition = 0;
-	last_volume = 0x108;
+	last_volume = 0x208;
 	last_bposition = 0;
 	last_bass = BASS_0dB;
 	last_tposition = 0;
@@ -25,7 +26,7 @@ BD3873FS::BD3873FS(){
 	digitalWrite(BD_DATA, LOW);
 }
 void BD3873FS::BD3873FS_init(){
-	addr_data_10bits = INPUT_B | INPUT_GAIN_18dB | SURR_OFF | INPUT_SURR_addr;
+	addr_data_10bits = current_input | INPUT_GAIN_18dB | SURR_OFF | INPUT_SURR_addr;
 	BD3873FS::write_10bits_to_chip(addr_data_10bits);
 	addr_data_10bits = VOL_87dB | VOL_addr;
 	BD3873FS::write_10bits_to_chip(addr_data_10bits);
@@ -40,8 +41,9 @@ void BD3873FS::BD3873FS_init(){
 void BD3873FS::input_control(int position){
 	if(position > last_iposition) state_inp = true;
 		else if(position < last_iposition) state_inp = false;
-	if(state_inp) addr_data_10bits = INPUT_A | INPUT_GAIN_18dB | SURR_OFF | INPUT_SURR_addr;
-	else addr_data_10bits = INPUT_B | INPUT_GAIN_18dB | SURR_OFF | INPUT_SURR_addr;
+	if(state_inp) current_input = INPUT_A;
+	else current_input = INPUT_B;
+	addr_data_10bits = current_input | INPUT_GAIN_18dB | SURR_OFF | INPUT_SURR_addr;
 	BD3873FS::write_10bits_to_chip(addr_data_10bits);
 	addr_data_10bits = last_volume | VOL_addr;
 	BD3873FS::write_10bits_to_chip(addr_data_10bits);
@@ -50,8 +52,8 @@ void BD3873FS::input_control(int position){
 void BD3873FS::surr_control(int position){
 	if(position > last_sposition) state_sur = true;
 		else if(position < last_sposition) state_sur = false;
-	if(state_sur) addr_data_10bits = INPUT_B | INPUT_GAIN_18dB | SURR_ON | INPUT_SURR_addr;
-	else addr_data_10bits = INPUT_B | INPUT_GAIN_18dB | SURR_OFF | INPUT_SURR_addr;
+	if(state_sur) addr_data_10bits = current_input | INPUT_GAIN_18dB | SURR_ON | INPUT_SURR_addr;
+	else addr_data_10bits = current_input | INPUT_GAIN_18dB | SURR_OFF | INPUT_SURR_addr;
 	BD3873FS::write_10bits_to_chip(addr_data_10bits);
 	addr_data_10bits = last_volume | VOL_addr;
 	BD3873FS::write_10bits_to_chip(addr_data_10bits);
