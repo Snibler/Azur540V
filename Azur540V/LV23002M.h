@@ -48,6 +48,8 @@ public:
 		void freq_m();
 		void freq_p();
 		void playMEM();
+		void playMEM_plus();
+		void playMEM_minus();
 		void mute();
 		void writeMEM();
 		void playST(byte MEMstationCurrent);

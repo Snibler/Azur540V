@@ -52,12 +52,23 @@ void LV23002M::freq_p(){
 		LV23002M::LV23002M_INmode(IN2mode,0x57,0xA8,0x28);
 	} else FQcurrent = FQbottom;
 }
-void LV23002M::playMEM(){
+void LV23002M::playMEM_plus(){
 	if(MEMstationCurrent < MEMstations)
-		MEMstationCurrent += 1;
-	else {
-		MEMstationCurrent = 1;
-	}
+			MEMstationCurrent += 1;
+		else {
+			MEMstationCurrent = 1;
+		}
+	LV23002M::playMEM();
+}
+void LV23002M::playMEM_minus(){
+	if(MEMstationCurrent > 1)
+			MEMstationCurrent -= 1;
+		else {
+			MEMstationCurrent = 1;
+		}
+	LV23002M::playMEM();
+}
+void LV23002M::playMEM(){
 	byte highByteAddr = MEMstationCurrent + (MEMstationCurrent - 1);
 	byte lowByteAddr = highByteAddr + 1;
 	FQcurrent = 0;

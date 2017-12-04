@@ -19,12 +19,16 @@ char * toArray(word number);
 char * numberArray = calloc(7, 1);
 word Freq;
 int position  = 0;
+int position_ir = 0;
 int newPosition;
 unsigned long currentMillis;
 unsigned long previousMillis = 0;
 #define INTERVAL 3000
 byte Function_switch = 0;
-
+bool mute_state = false;
+bool surr_state = false;
+bool source_state = false;
+bool ir_state = false;
 bool dts 	= false;
 bool RDS 	= false;
 bool ST 	= false;
@@ -42,7 +46,7 @@ bool dp2	= false;
 
 void setup() {
 //init serial for debugging
-	Serial.begin(9600);
+//	Serial.begin(9600);
 //init display
 	disp.PT6311_init();
 	disp.Display_Write(" TUNER",sizeof(" TUNER")-1, dts,RDS,ST,DOLBY,TUNED,PLAY,FM,MHz,MEM,_3D,_2dp1,_2dp2,dp1,dp2);
@@ -62,7 +66,13 @@ void setup() {
 }
 
 void loop() {
-	delay(200);
+	if(irrecv.decode(&results)) ir_state = true;
+	if (ir_state && results.value != VOL_UP_IR 	&& results.value != VOL_DOWN_IR && results.value != CH_UP_IR
+			 	 && results.value != CH_DOWN_IR && results.value != MUTE_IR 	&& results.value != SOURCE_IR
+				 && results.value != STEREO_SUR_IR){
+		irrecv.resume();
+		ir_state = false;
+	}
 //read buttons status
 	disp.PT6311_readKey();
 //return display current station after interval
@@ -169,24 +179,101 @@ void loop() {
 		disp.Disk_Demo();
 	}
 	if (disp.KeyData == PLAYB){
-		radio.playMEM();
+		radio.playMEM_plus();
 		Freq = radio.FQcurrent-1070;
 		disp.Display_Write(toArray(Freq),7, dts,RDS,ST = true,DOLBY,TUNED = true,PLAY = true,FM = true,MHz = true,
 				MEM = true,_3D,_2dp1,_2dp2,dp1 = true,dp2);
 		disp.Disk_Demo();
 	}
-	if (disp.KeyData == STOP){
-		radio.mute();
-		disp.Display_Write(" MUTE",sizeof(" MUTE")-1, dts,RDS,ST = false,DOLBY,TUNED = false,PLAY = false,FM = true,MHz = true,
-				MEM = false,_3D,_2dp1,_2dp2,dp1 = false,dp2);
-		radio.MEMstationCurrent -= 1;
+	if (ir_state && results.value == CH_UP_IR){
+		irrecv.resume();
+		ir_state = false;
+		radio.playMEM_plus();
+		Freq = radio.FQcurrent-1070;
+		disp.Display_Write(toArray(Freq),7, dts,RDS,ST = true,DOLBY,TUNED = true,PLAY = true,FM = true,MHz = true,
+				MEM = true,_3D,_2dp1,_2dp2,dp1 = true,dp2);
 		disp.Disk_Demo();
 	}
-
-	if (irrecv.decode(&results)) {
-	    Serial.println(results.value, HEX);
-	    irrecv.resume(); // Receive the next value
-	  }
+	if (ir_state && results.value == CH_DOWN_IR){
+		irrecv.resume();
+		ir_state = false;
+		radio.playMEM_minus();
+		Freq = radio.FQcurrent-1070;
+		disp.Display_Write(toArray(Freq),7, dts,RDS,ST = true,DOLBY,TUNED = true,PLAY = true,FM = true,MHz = true,
+				MEM = true,_3D,_2dp1,_2dp2,dp1 = true,dp2);
+		disp.Disk_Demo();
+		}
+	if (disp.KeyData == STOP || (ir_state && results.value == MUTE_IR)){
+		irrecv.resume();
+		ir_state = false;
+		if (mute_state){
+			mute_state = false;
+			radio.playMEM();
+			Freq = radio.FQcurrent-1070;
+			disp.Display_Write(toArray(Freq),7, dts,RDS,ST = true,DOLBY,TUNED = true,PLAY = true,FM = true,MHz = true,
+							MEM = true,_3D,_2dp1,_2dp2,dp1 = true,dp2);
+		}
+		else {
+			radio.mute();
+			mute_state = true;
+			disp.Display_Write(" MUTE",sizeof(" MUTE")-1, dts,RDS,ST = false,DOLBY,TUNED = false,PLAY = false,FM = true,MHz = true,
+							MEM = false,_3D,_2dp1,_2dp2,dp1 = false,dp2);
+		}
+		previousMillis = millis();
+		disp.Disk_Demo();
+	}
+	if (ir_state && results.value == VOL_UP_IR){
+		irrecv.resume();
+		ir_state = false;
+		position_ir ++;
+		vol.volume_control(position_ir);
+		disp.Display_Write(vol.toArray("VOL"),7, dts,RDS,ST = true,DOLBY,TUNED = true,PLAY = true,FM = true,MHz = true,
+							MEM = false,_3D,_2dp1,_2dp2,dp1 = false,dp2);
+		disp.Disk_Demo();
+	}
+	if (ir_state && results.value == VOL_DOWN_IR){
+		irrecv.resume();
+		ir_state = false;
+		position_ir --;
+		vol.volume_control(position_ir);
+		disp.Display_Write(vol.toArray("VOL"),7, dts,RDS,ST = true,DOLBY,TUNED = true,PLAY = true,FM = true,MHz = true,
+							MEM = false,_3D,_2dp1,_2dp2,dp1 = false,dp2);
+		disp.Disk_Demo();
+	}
+	if (ir_state && results.value == STEREO_SUR_IR){
+		irrecv.resume();
+		ir_state = false;
+		if(!surr_state) {
+			position_ir ++;
+			surr_state = true;
+		}
+		else {
+			position_ir --;
+			surr_state = false;
+		}
+		vol.surr_control(position_ir);
+		disp.Display_Write(vol.toArray("SUR"),7, dts,RDS,ST = true,DOLBY,TUNED = true,PLAY = true,FM = true,MHz = true,
+							MEM = false,_3D,_2dp1,_2dp2,dp1 = false,dp2);
+		previousMillis = millis();
+		disp.Disk_Demo();
+	}
+	if (ir_state && results.value == SOURCE_IR){
+		irrecv.resume();
+		ir_state = false;
+		if(!source_state) {
+					position_ir ++;
+					source_state = true;
+				}
+				else {
+					position_ir --;
+					source_state = false;
+				}
+		vol.input_control(position_ir);
+		disp.Display_Write(vol.toArray("AUX"),7, dts,RDS,ST = true,DOLBY,TUNED = true,PLAY = true,FM = true,MHz = true,
+							MEM = false,_3D,_2dp1,_2dp2,dp1 = false,dp2);
+		previousMillis = millis();
+		disp.Disk_Demo();
+	}
 }
 //number to char array converter
 char * toArray(word number)

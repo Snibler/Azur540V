@@ -33,10 +33,8 @@ void BD3873FS::BD3873FS_init(){
 	BD3873FS::write_10bits_to_chip(addr_data_10bits);
 	addr_data_10bits = 0x03;
 	BD3873FS::write_10bits_to_chip(addr_data_10bits);
-
+	delayMicroseconds(5);
 	addr_data_10bits = last_volume | VOL_addr;
-	BD3873FS::write_10bits_to_chip(addr_data_10bits);
-	addr_data_10bits = BASS_0dB | TREBLE_0dB | BASS_TREBLE_addr;
 	BD3873FS::write_10bits_to_chip(addr_data_10bits);
 }
 void BD3873FS::input_control(int position){
@@ -168,6 +166,17 @@ char * BD3873FS::toArray(char name[4]){
 	dispArray[2] = name[2];
 	if(name[0] == 'V'){
 		byte bars = 12 - last_volume/0x54;
+		if(last_volume == 0){
+			dispArray[3] = 0;
+			dispArray[4] = 'M';
+			dispArray[5] = 'A';
+			dispArray[6] = 'X';
+		} else if(last_volume == 0x3F8){
+			dispArray[3] = 0;
+			dispArray[4] = 'M';
+			dispArray[5] = 'I';
+			dispArray[6] = 'N';
+		} else
 		for(byte i = 0; i < 4; i++){
 			if(bars == 0){
 				dispArray[3 + i] = 0;
