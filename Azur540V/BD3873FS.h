@@ -9,8 +9,8 @@
 #ifndef BD3873FS_H_
 #define BD3873FS_H_
 
-#define BD_CLK	4
-#define BD_DATA	5
+#define BD_CLK	4	//PD4
+#define BD_DATA	5	//PD5
 
 #define INPUT_SURR_addr 	0x0
 #define VOL_addr 			0x01
@@ -46,7 +46,6 @@
 class BD3873FS {
 private:
 	bool state_sur;
-	bool state_inp;
 	word addr_data_10bits;
 	int last_vposition;
 	word last_volume;
@@ -65,6 +64,7 @@ private:
 	void treble_up();
 	void treble_down();
 public:
+	bool state_inp;
 	char * dispArray;
 	BD3873FS();
 	void BD3873FS_init();

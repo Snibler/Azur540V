@@ -253,13 +253,19 @@ void BD3873FS::write_10bits_to_chip(word data){
 	for (byte count = 0; count < 10; count++)
 		   {
 		    if((data<<count)&0x200)
-		    	digitalWrite(BD_DATA,HIGH);
+		    	//digitalWrite(BD_DATA,HIGH);
+		    	PORTD |= (1 << PD5);
 		    else
-		    	digitalWrite(BD_DATA,LOW);
-		    digitalWrite(BD_CLK,HIGH);
-		    if(count == 9) digitalWrite(BD_DATA,HIGH);
-		    digitalWrite(BD_CLK,LOW);
+		    	//digitalWrite(BD_DATA,LOW);
+		    	PORTD &= ~(1 << PD5);
+		    //digitalWrite(BD_CLK,HIGH);
+		    PORTD |= (1 << PD4);
+		    if(count == 9) //digitalWrite(BD_DATA,HIGH);
+		    				PORTD |= (1 << PD5);
+		    //digitalWrite(BD_CLK,LOW);
+		    PORTD &= ~(1 << PD4);
 		   }
-	digitalWrite(BD_DATA,LOW);
+	//digitalWrite(BD_DATA,LOW);
+	PORTD &= ~(1 << PD5);
 }
 
