@@ -23,4 +23,4 @@ project/Azur540V.cpp.o: ../../Azur540V.cpp ../../PT6311.h \
  /home/snibler/.arduinocdt/libraries/IRremote/2.2.3/IRremote.h \
  /home/snibler/.arduinocdt/libraries/IRremote/2.2.3/IRremoteInt.h \
  /home/snibler/.arduinocdt/libraries/IRremote/2.2.3/boarddefs.h \
- ../../IRremoteCodes.h
+ ../../IRremoteCodes.h ../../vars.h
