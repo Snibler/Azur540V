@@ -157,6 +157,7 @@ void loop() {
 			case 4:
 				disp.Display_Write(vol.toArray("AUX"),7, dts,RDS,ST = true,DOLBY,TUNED = true,PLAY = true,FM = true,MHz = true,
 											MEM = false,_3D,_2dp1,_2dp2,dp1 = false,dp2);
+				//scan enconer position
 				newPosition = myEnc.read();
 				if(newPosition != position){
 						position = newPosition;
