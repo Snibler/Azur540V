@@ -57,7 +57,7 @@
 #define DISPLAY_ON_13_16  	0b10001110	//Pulse width = 13/16
 #define DISPLAY_ON_14_16  	0b10001111	//Pulse width = 14/16
 
-class PT6311 {
+class DispKeyPT6311 {
 private:
 //	byte position;
 	void PT6311_writeByte(byte dat_com);
@@ -66,7 +66,7 @@ private:
 
 public:
 	byte KeyData;
-	PT6311();
+	DispKeyPT6311();
 	void PT6311_init();
 	void Display_OFF();
 	void Disk_Demo();

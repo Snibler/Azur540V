@@ -5,16 +5,16 @@
  *      Author: snibler
  */
 
-#include "LV23002M.h"
+#include "TunerLV23002M.h"
 
 
-void LV23002M::LM23002M_init(){
+void TunerLV23002M::LM23002M_init(){
 	SPI.begin();
 	SPI.beginTransaction(SPISettings(500000, MSBFIRST, SPI_MODE0));
 	FQcurrent = FQbottom;
 	MEMstations = 30;
 }
-void LV23002M::playST(byte MEMstationCurrent){
+void TunerLV23002M::playST(byte MEMstationCurrent){
 	if(MEMstationCurrent != 0){
 		byte highByteAddr = MEMstationCurrent + (MEMstationCurrent - 1);
 		byte lowByteAddr = highByteAddr + 1;
@@ -23,11 +23,11 @@ void LV23002M::playST(byte MEMstationCurrent){
 		FQcurrent = (FQcurrent<<8);
 		FQcurrent |= EEPROM.read(lowByteAddr);
 		if (FQcurrent < FQbottom || FQcurrent > FQtop) FQcurrent = FQbottom;
-		LV23002M::LV23002M_INmode(IN1mode,reverseByte(lowByte(FQcurrent)),reverseByte(highByte(FQcurrent)),0x41);
-		LV23002M::LV23002M_INmode(IN2mode,0x57,0xA8,0x28);
+		TunerLV23002M::LV23002M_INmode(IN1mode,reverseByte(lowByte(FQcurrent)),reverseByte(highByte(FQcurrent)),0x41);
+		TunerLV23002M::LV23002M_INmode(IN2mode,0x57,0xA8,0x28);
 	} else _NOP();
 }
-void LV23002M::writeMEM(){
+void TunerLV23002M::writeMEM(){
 	if(MEMstationCurrent < MEMstations)
 			MEMstationCurrent += 1;
 		else {
@@ -38,37 +38,37 @@ void LV23002M::writeMEM(){
 		EEPROM.write(highByteAddr, highByte(FQcurrent));
 		EEPROM.write(lowByteAddr, lowByte(FQcurrent));
 }
-void LV23002M::freq_m(){
+void TunerLV23002M::freq_m(){
 	if(FQcurrent > FQbottom){
 		FQcurrent -= 10;
-		LV23002M::LV23002M_INmode(IN1mode,reverseByte(lowByte(FQcurrent)),reverseByte(highByte(FQcurrent)),0x41);
-		LV23002M::LV23002M_INmode(IN2mode,0x57,0xA8,0x28);
+		TunerLV23002M::LV23002M_INmode(IN1mode,reverseByte(lowByte(FQcurrent)),reverseByte(highByte(FQcurrent)),0x41);
+		TunerLV23002M::LV23002M_INmode(IN2mode,0x57,0xA8,0x28);
 	} else FQcurrent = FQtop;
 }
-void LV23002M::freq_p(){
+void TunerLV23002M::freq_p(){
 	if(FQcurrent < FQtop){
 		FQcurrent += 10;
-		LV23002M::LV23002M_INmode(IN1mode,reverseByte(lowByte(FQcurrent)),reverseByte(highByte(FQcurrent)),0x41);
-		LV23002M::LV23002M_INmode(IN2mode,0x57,0xA8,0x28);
+		TunerLV23002M::LV23002M_INmode(IN1mode,reverseByte(lowByte(FQcurrent)),reverseByte(highByte(FQcurrent)),0x41);
+		TunerLV23002M::LV23002M_INmode(IN2mode,0x57,0xA8,0x28);
 	} else FQcurrent = FQbottom;
 }
-void LV23002M::playMEM_plus(){
+void TunerLV23002M::playMEM_plus(){
 	if(MEMstationCurrent < MEMstations)
 			MEMstationCurrent += 1;
 		else {
 			MEMstationCurrent = 1;
 		}
-	LV23002M::playMEM();
+	TunerLV23002M::playMEM();
 }
-void LV23002M::playMEM_minus(){
+void TunerLV23002M::playMEM_minus(){
 	if(MEMstationCurrent > 1)
 			MEMstationCurrent -= 1;
 		else {
 			MEMstationCurrent = 1;
 		}
-	LV23002M::playMEM();
+	TunerLV23002M::playMEM();
 }
-void LV23002M::playMEM(){
+void TunerLV23002M::playMEM(){
 	byte highByteAddr = MEMstationCurrent + (MEMstationCurrent - 1);
 	byte lowByteAddr = highByteAddr + 1;
 	FQcurrent = 0;
@@ -76,14 +76,14 @@ void LV23002M::playMEM(){
 	FQcurrent = (FQcurrent<<8);
 	FQcurrent |= EEPROM.read(lowByteAddr);
 	if (FQcurrent < FQbottom || FQcurrent > FQtop) FQcurrent = FQbottom;
-	LV23002M::LV23002M_INmode(IN1mode,reverseByte(lowByte(FQcurrent)),reverseByte(highByte(FQcurrent)),0x41);
-	LV23002M::LV23002M_INmode(IN2mode,0x57,0xA8,0x28);
+	TunerLV23002M::LV23002M_INmode(IN1mode,reverseByte(lowByte(FQcurrent)),reverseByte(highByte(FQcurrent)),0x41);
+	TunerLV23002M::LV23002M_INmode(IN2mode,0x57,0xA8,0x28);
 
 }
-void LV23002M::mute(){
-	LV23002M::LV23002M_INmode(IN2mode,MUTE,0xA8,0x28);
+void TunerLV23002M::mute(){
+	TunerLV23002M::LV23002M_INmode(IN2mode,MUTE,0xA8,0x28);
 }
-void LV23002M::LV23002M_INmode(byte INmode, byte INdata1, byte INdata2, byte INdata3){
+void TunerLV23002M::LV23002M_INmode(byte INmode, byte INdata1, byte INdata2, byte INdata3){
 //digitalWrite(LV_CE, LOW);
 	PORTB &= ~(1 << PB2);
 		_NOP();
@@ -135,7 +135,7 @@ void LV23002M::LV23002M_INmode(byte INmode, byte INdata1, byte INdata2, byte INd
 		_NOP();
 	SPI.endTransaction();
 }
-void LV23002M::LV23002M_OUTmode(){
+void TunerLV23002M::LV23002M_OUTmode(){
 //digitalWrite(LV_CE, LOW);
 	PORTB &= ~(1 << PB2);
 		_NOP();
@@ -194,7 +194,7 @@ void LV23002M::LV23002M_OUTmode(){
 	IFcounterbin = (IFcounterbin<<8);
 	IFcounterbin |= OUTdata3;
 }
-unsigned char LV23002M::reverseByte(byte data){
+unsigned char TunerLV23002M::reverseByte(byte data){
 	byte result = 0;
 	for(byte i = 0;i < 8;i++){
 		if (data & (1 << i))

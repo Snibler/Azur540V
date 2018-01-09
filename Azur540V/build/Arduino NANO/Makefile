@@ -11,9 +11,9 @@ endif
 
 PROJECT_OBJS = \
 	project/Azur540V.cpp.o \
-	project/BD3873FS.cpp.o \
-	project/LV23002M.cpp.o \
-	project/PT6311.cpp.o \
+	project/DispKeyPT6311.cpp.o \
+	project/SoundBD3873FS.cpp.o \
+	project/TunerLV23002M.cpp.o \
 
 PLATFORM_CORE_OBJS = \
 	core/new.cpp.o \
@@ -98,29 +98,29 @@ project/Azur540V.cpp.d: ;
 
 -include project/Azur540V.cpp.d 
 
-project/BD3873FS.cpp.o: ../../BD3873FS.cpp project/BD3873FS.cpp.d
+project/DispKeyPT6311.cpp.o: ../../DispKeyPT6311.cpp project/DispKeyPT6311.cpp.d
 	@$(call mymkdir,$(dir $@))
 	"/home/snibler/.arduinocdt/packages/arduino/tools/avr-gcc/4.9.2-atmel3.5.4-arduino2/bin/avr-g++" -c -g -Os -w -std=gnu++11 -fpermissive -fno-exceptions -ffunction-sections -fdata-sections -fno-threadsafe-statics -MMD -flto -mmcu=atmega328p -DF_CPU=16000000L -DARDUINO=10608 -DARDUINO_AVR_NANO -DARDUINO_ARCH_AVR   -I"/home/snibler/.arduinocdt/packages/arduino/hardware/avr/1.6.20/cores/arduino" -I"/home/snibler/.arduinocdt/packages/arduino/hardware/avr/1.6.20/variants/eightanaloginputs" -I"/home/snibler/.arduinocdt/packages/arduino/hardware/avr/1.6.20/libraries/SPI/src" -I"/home/snibler/.arduinocdt/packages/arduino/hardware/avr/1.6.20/libraries/EEPROM/src" -I"/home/snibler/.arduinocdt/libraries/IRremote/2.2.3" -I"/home/snibler/.arduinocdt/libraries/Encoder/1.4.1" -I"/home/snibler/.arduinocdt/libraries/Encoder/1.4.1/utility" "$<" -o "$@"
 
-project/BD3873FS.cpp.d: ;
+project/DispKeyPT6311.cpp.d: ;
 
--include project/BD3873FS.cpp.d 
+-include project/DispKeyPT6311.cpp.d 
 
-project/LV23002M.cpp.o: ../../LV23002M.cpp project/LV23002M.cpp.d
+project/SoundBD3873FS.cpp.o: ../../SoundBD3873FS.cpp project/SoundBD3873FS.cpp.d
 	@$(call mymkdir,$(dir $@))
 	"/home/snibler/.arduinocdt/packages/arduino/tools/avr-gcc/4.9.2-atmel3.5.4-arduino2/bin/avr-g++" -c -g -Os -w -std=gnu++11 -fpermissive -fno-exceptions -ffunction-sections -fdata-sections -fno-threadsafe-statics -MMD -flto -mmcu=atmega328p -DF_CPU=16000000L -DARDUINO=10608 -DARDUINO_AVR_NANO -DARDUINO_ARCH_AVR   -I"/home/snibler/.arduinocdt/packages/arduino/hardware/avr/1.6.20/cores/arduino" -I"/home/snibler/.arduinocdt/packages/arduino/hardware/avr/1.6.20/variants/eightanaloginputs" -I"/home/snibler/.arduinocdt/packages/arduino/hardware/avr/1.6.20/libraries/SPI/src" -I"/home/snibler/.arduinocdt/packages/arduino/hardware/avr/1.6.20/libraries/EEPROM/src" -I"/home/snibler/.arduinocdt/libraries/IRremote/2.2.3" -I"/home/snibler/.arduinocdt/libraries/Encoder/1.4.1" -I"/home/snibler/.arduinocdt/libraries/Encoder/1.4.1/utility" "$<" -o "$@"
 
-project/LV23002M.cpp.d: ;
+project/SoundBD3873FS.cpp.d: ;
 
--include project/LV23002M.cpp.d 
+-include project/SoundBD3873FS.cpp.d 
 
-project/PT6311.cpp.o: ../../PT6311.cpp project/PT6311.cpp.d
+project/TunerLV23002M.cpp.o: ../../TunerLV23002M.cpp project/TunerLV23002M.cpp.d
 	@$(call mymkdir,$(dir $@))
 	"/home/snibler/.arduinocdt/packages/arduino/tools/avr-gcc/4.9.2-atmel3.5.4-arduino2/bin/avr-g++" -c -g -Os -w -std=gnu++11 -fpermissive -fno-exceptions -ffunction-sections -fdata-sections -fno-threadsafe-statics -MMD -flto -mmcu=atmega328p -DF_CPU=16000000L -DARDUINO=10608 -DARDUINO_AVR_NANO -DARDUINO_ARCH_AVR   -I"/home/snibler/.arduinocdt/packages/arduino/hardware/avr/1.6.20/cores/arduino" -I"/home/snibler/.arduinocdt/packages/arduino/hardware/avr/1.6.20/variants/eightanaloginputs" -I"/home/snibler/.arduinocdt/packages/arduino/hardware/avr/1.6.20/libraries/SPI/src" -I"/home/snibler/.arduinocdt/packages/arduino/hardware/avr/1.6.20/libraries/EEPROM/src" -I"/home/snibler/.arduinocdt/libraries/IRremote/2.2.3" -I"/home/snibler/.arduinocdt/libraries/Encoder/1.4.1" -I"/home/snibler/.arduinocdt/libraries/Encoder/1.4.1/utility" "$<" -o "$@"
 
-project/PT6311.cpp.d: ;
+project/TunerLV23002M.cpp.d: ;
 
--include project/PT6311.cpp.d 
+-include project/TunerLV23002M.cpp.d 
 
 
 core/new.cpp.o: /home/snibler/.arduinocdt/packages/arduino/hardware/avr/1.6.20/cores/arduino/new.cpp core/new.cpp.d

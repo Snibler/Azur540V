@@ -43,7 +43,7 @@
 #define TREBLE_step_1dB	0x04
 #define TREBLE_step_2dB	0x08
 
-class BD3873FS {
+class SoundBD3873FS {
 private:
 	bool state_sur;
 	word addr_data_10bits;
@@ -66,7 +66,7 @@ private:
 public:
 	bool state_inp;
 	char * dispArray;
-	BD3873FS();
+	SoundBD3873FS();
 	void BD3873FS_init();
 	void volume_control(int position);
 	void bass_control(int position);

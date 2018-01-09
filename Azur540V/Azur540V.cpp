@@ -1,6 +1,6 @@
-#include "PT6311.h"
-#include "LV23002M.h"
-#include "BD3873FS.h"
+#include "DispKeyPT6311.h"
+#include "SoundBD3873FS.h"
+#include "TunerLV23002M.h"
 #define ENCODER_OPTIMIZE_INTERRUPTS
 #include <Encoder.h>
 #include <IRremote.h>
@@ -10,14 +10,12 @@
 #define AMP_MUTE 6
 #define RECV_PIN 7
 
-PT6311 disp;
-LV23002M radio;
-BD3873FS vol;
+DispKeyPT6311 disp;
+TunerLV23002M radio;
+SoundBD3873FS vol;
 Encoder myEnc(3, 2);
 IRrecv irrecv(RECV_PIN);
 decode_results results;
-
-
 
 void setup() {
 //Mute ON

@@ -33,7 +33,7 @@
 //defining INdata bytes
 #define MUTE	0x08
 
-class LV23002M {
+class TunerLV23002M {
 private:
 		byte MEMstations;
 		void LV23002M_INmode(byte INmode, byte INdata1, byte INdata2, byte INdata3);
