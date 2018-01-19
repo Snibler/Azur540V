@@ -65,7 +65,7 @@ void loop() {
 		else if(!vol.state_inp){
 		Freq = radio.FQcurrent-1070;
 		disp.Display_Write(toArray(Freq),7, dts,RDS,ST = true,DOLBY,TUNED = true,PLAY = true,FM = true,MHz = true,
-						MEM = true,_3D,_2dp1,_2dp2,dp1 = true,dp2);
+						MEM,_3D,_2dp1,_2dp2,dp1 = true,dp2);
 		} else disp.Display_Write(vol.toArray("AUX"),7, dts,RDS,ST = true,DOLBY,TUNED = true,PLAY = true,FM = true,MHz = true,
 						MEM = false,_3D,_2dp1,_2dp2,dp1 = false,dp2);
 	}
@@ -158,12 +158,14 @@ if(disp.KeyData != 0){
 		Freq = radio.FQcurrent-1070;
 		disp.Display_Write(toArray(Freq),7, dts,RDS,ST = true,DOLBY,TUNED = true,PLAY = true,FM = true,MHz = true,
 				MEM = false,_3D,_2dp1,_2dp2,dp1 = true,dp2);
+		disp.Disk_Demo();
 	} else
 	if (disp.KeyData == TUNING_P && !vol.state_inp){
 		radio.freq_p();
 		Freq = radio.FQcurrent-1070;
 		disp.Display_Write(toArray(Freq),7, dts,RDS,ST = true,DOLBY,TUNED = true,PLAY = true,FM = true,MHz = true,
 				MEM = false,_3D,_2dp1,_2dp2,dp1 = true,dp2);
+		disp.Disk_Demo();
 	} else
 	if (disp.KeyData == OPEN_CLOSE && !vol.state_inp){
 		radio.writeMEM();
