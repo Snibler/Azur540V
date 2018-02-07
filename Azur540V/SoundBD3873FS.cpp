@@ -70,13 +70,12 @@ void SoundBD3873FS::volume_up(){
 		addr_data_10bits = volume | VOL_addr;
 		SoundBD3873FS::write_10bits_to_chip(addr_data_10bits);
 		last_volume = volume;
-		} else if(last_volume == VOL_step_dB){
+	} else if(last_volume == VOL_step_dB){
 			word volume = last_volume - VOL_step_dB;
 			addr_data_10bits = volume | VOL_addr;
 			SoundBD3873FS::write_10bits_to_chip(addr_data_10bits);
 			last_volume = volume;
-		}
-		else _NOP();
+			} else _NOP();
 }
 void SoundBD3873FS::volume_down(){
 	if(last_volume < VOL_87dB && last_volume >= VOL_step_dB){
@@ -84,13 +83,12 @@ void SoundBD3873FS::volume_down(){
 		addr_data_10bits = volume | VOL_addr;
 		SoundBD3873FS::write_10bits_to_chip(addr_data_10bits);
 		last_volume = volume;
-		} else if(last_volume == 0){
+	} else if(last_volume == 0){
 			word volume = last_volume + VOL_step_dB;
 			addr_data_10bits = volume | VOL_addr;
 			SoundBD3873FS::write_10bits_to_chip(addr_data_10bits);
 			last_volume = volume;
-		}
-		else _NOP();
+			} else _NOP();
 }
 void SoundBD3873FS::bass_control(int position){
 	if(position > last_bposition) bass_up();
@@ -101,66 +99,62 @@ void SoundBD3873FS::bass_control(int position){
 }
 void SoundBD3873FS::bass_up(){
 	if(last_bass < BASS_14dB && last_bass >= BASS_step_1dB){
-			word bass = last_bass + BASS_step_2dB;
-			addr_data_10bits = bass | last_treble | BASS_TREBLE_addr;
-			SoundBD3873FS::write_10bits_to_chip(addr_data_10bits);
-			last_bass = bass;
-			} else if(last_bass == 0){
+		word bass = last_bass + BASS_step_2dB;
+		addr_data_10bits = bass | last_treble | BASS_TREBLE_addr;
+		SoundBD3873FS::write_10bits_to_chip(addr_data_10bits);
+		last_bass = bass;
+	} else if(last_bass == 0){
 				word bass = last_bass + BASS_step_1dB;
 				addr_data_10bits = bass | last_treble | BASS_TREBLE_addr;
 				SoundBD3873FS::write_10bits_to_chip(addr_data_10bits);
 				last_bass = bass;
-			}
-			else _NOP();
+			} else _NOP();
 }
 void SoundBD3873FS::bass_down(){
 	if(last_bass > 0 && last_bass > BASS_step_1dB){
-			word bass = last_bass - BASS_step_2dB;
-			addr_data_10bits = bass | last_treble | BASS_TREBLE_addr;
-			SoundBD3873FS::write_10bits_to_chip(addr_data_10bits);
-			last_bass = bass;
-			} else if(last_bass == BASS_step_1dB){
+		word bass = last_bass - BASS_step_2dB;
+		addr_data_10bits = bass | last_treble | BASS_TREBLE_addr;
+		SoundBD3873FS::write_10bits_to_chip(addr_data_10bits);
+		last_bass = bass;
+	} else if(last_bass == BASS_step_1dB){
 				word bass = last_bass - BASS_step_1dB;
 				addr_data_10bits = bass | last_treble | BASS_TREBLE_addr;
 				SoundBD3873FS::write_10bits_to_chip(addr_data_10bits);
 				last_bass = bass;
-			}
-			else _NOP();
+			} else _NOP();
 }
 void SoundBD3873FS::treble_control(int position){
 	if(position > last_tposition) treble_up();
-		else if(position < last_tposition) treble_down();
-		last_tposition = position;
-		addr_data_10bits = last_volume | VOL_addr;
-		SoundBD3873FS::write_10bits_to_chip(addr_data_10bits);
+	else if(position < last_tposition) treble_down();
+	last_tposition = position;
+	addr_data_10bits = last_volume | VOL_addr;
+	SoundBD3873FS::write_10bits_to_chip(addr_data_10bits);
 }
 void SoundBD3873FS::treble_up(){
 	if(last_treble < TREBLE_12dB && last_treble >= TREBLE_step_1dB){
-			word treble = last_treble + TREBLE_step_2dB;
-			addr_data_10bits = last_bass | treble | BASS_TREBLE_addr;
-			SoundBD3873FS::write_10bits_to_chip(addr_data_10bits);
-			last_treble = treble;
-			} else if(last_treble == 0){
+		word treble = last_treble + TREBLE_step_2dB;
+		addr_data_10bits = last_bass | treble | BASS_TREBLE_addr;
+		SoundBD3873FS::write_10bits_to_chip(addr_data_10bits);
+		last_treble = treble;
+	} else if(last_treble == 0){
 				word treble = last_treble + TREBLE_step_1dB;
 				addr_data_10bits = last_bass | treble | BASS_TREBLE_addr;
 				SoundBD3873FS::write_10bits_to_chip(addr_data_10bits);
 				last_treble = treble;
-			}
-			else _NOP();
+			} else _NOP();
 }
 void SoundBD3873FS::treble_down(){
 	if(last_treble > 0 && last_treble > TREBLE_step_1dB){
-			word treble = last_treble - TREBLE_step_2dB;
-			addr_data_10bits = last_bass | treble | BASS_TREBLE_addr;
-			SoundBD3873FS::write_10bits_to_chip(addr_data_10bits);
-			last_treble = treble;
-			} else if(last_treble == TREBLE_step_1dB){
+		word treble = last_treble - TREBLE_step_2dB;
+		addr_data_10bits = last_bass | treble | BASS_TREBLE_addr;
+		SoundBD3873FS::write_10bits_to_chip(addr_data_10bits);
+		last_treble = treble;
+	} else if(last_treble == TREBLE_step_1dB){
 				word treble = last_treble - TREBLE_step_1dB;
 				addr_data_10bits = last_bass | treble | BASS_TREBLE_addr;
 				SoundBD3873FS::write_10bits_to_chip(addr_data_10bits);
 				last_treble = treble;
-			}
-			else _NOP();
+			} else _NOP();
 }
 char * SoundBD3873FS::toArray(char name[4]){
 	dispArray[0] = name[0];
@@ -250,22 +244,15 @@ char * SoundBD3873FS::toArray(char name[4]){
 	return dispArray;
 }
 void SoundBD3873FS::write_10bits_to_chip(word data){
-	for (byte count = 0; count < 10; count++)
-		   {
+	for (byte count = 0; count < 10; count++){
 		    if((data<<count)&0x200)
-		    	//digitalWrite(BD_DATA,HIGH);
-		    	PORTD |= (1 << PD5);
+		    	PORTD |= (1 << BD_DATA);
 		    else
-		    	//digitalWrite(BD_DATA,LOW);
-		    	PORTD &= ~(1 << PD5);
-		    //digitalWrite(BD_CLK,HIGH);
-		    PORTD |= (1 << PD4);
-		    if(count == 9) //digitalWrite(BD_DATA,HIGH);
-		    				PORTD |= (1 << PD5);
-		    //digitalWrite(BD_CLK,LOW);
-		    PORTD &= ~(1 << PD4);
-		   }
-	//digitalWrite(BD_DATA,LOW);
-	PORTD &= ~(1 << PD5);
+		    	PORTD &= ~(1 << BD_DATA);
+		    PORTD |= (1 << BD_CLK);
+		    if(count == 9) PORTD |= (1 << BD_DATA);
+		    PORTD &= ~(1 << BD_CLK);
+	}
+	PORTD &= ~(1 << BD_DATA);
 }
 

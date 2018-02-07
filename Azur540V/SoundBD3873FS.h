@@ -9,8 +9,8 @@
 #ifndef BD3873FS_H_
 #define BD3873FS_H_
 
-#define BD_CLK	4	//PD4
-#define BD_DATA	5	//PD5
+#define BD_CLK	PD4
+#define BD_DATA	PD5
 
 #define INPUT_SURR_addr 	0x0
 #define VOL_addr 			0x01

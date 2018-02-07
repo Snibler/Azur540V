@@ -15,9 +15,9 @@
 #define PT6311_H_
 
 //defining pins to witch MEGA connected
-#define PT_CLK A5
-#define PT_STB A4
-#define PT_DATA A3
+#define PT_CLK PC5
+#define PT_STB PC4
+#define PT_DATA PC3
 
 //COMMAND 1: DISPLAY MODE SETTING COMMANDS
 #define DISPLAY_MODE_8_20  0b00000000	//0XXX: 8 digits, 20 segments

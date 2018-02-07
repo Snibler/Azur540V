@@ -12,36 +12,34 @@ word converter(char symbol);
 unsigned int Disk[10] = {DISK1, DISK2, DISK3, DISK4, DISK5, DISK6, DISK7, DISK8, DISK9, DISK10};
 
 DispKeyPT6311::DispKeyPT6311(){
-//	position = 0;
+// position = 0;
 	KeyData = 0;
 	pinMode(PT_CLK, OUTPUT);
 	pinMode(PT_STB, OUTPUT);
 	pinMode(PT_DATA, OUTPUT);
-//digitalWrite(PT_STB, HIGH);
-	PORTC |= (1 << PC4);
-//digitalWrite(PT_CLK, HIGH);
-	PORTC |= (1 << PC5);
-//digitalWrite(PT_DATA, HIGH);
-	PORTC |= (1 << PC3);
+	PORTC |= (1 << PT_STB);
+	PORTC |= (1 << PT_CLK);
+	PORTC |= (1 << PT_DATA);
 }
 void DispKeyPT6311::Disk_Demo(){
 	for (byte i = 0; i < 10; i++){
 //Digit 9
 		DispKeyPT6311::PT6311_writeCommand(ADDRESS9);
-					DispKeyPT6311::PT6311_writeData(((Disk[i]>>8) & 0xFF) | DVD);
-				DispKeyPT6311::PT6311_writeCommand(ADDRESS9 + 1);
-					DispKeyPT6311::PT6311_writeData((Disk[i] & 0xFF) | MHzcode | MEMcode);
+				DispKeyPT6311::PT6311_writeData(((Disk[i]>>8) & 0xFF) | DVD);
+		DispKeyPT6311::PT6311_writeCommand(ADDRESS9 + 1);
+				DispKeyPT6311::PT6311_writeData((Disk[i] & 0xFF) | MHzcode | MEMcode);
 		delay(50);
 	}
 //Digit 9
-				DispKeyPT6311::PT6311_writeCommand(ADDRESS9);
-						DispKeyPT6311::PT6311_writeData(((DISK_FULL>>8) & 0xFF) | DVD);
-				DispKeyPT6311::PT6311_writeCommand(ADDRESS9 + 1);
-					DispKeyPT6311::PT6311_writeData((DISK_FULL & 0xFF) | MHzcode | MEMcode);
+		DispKeyPT6311::PT6311_writeCommand(ADDRESS9);
+				DispKeyPT6311::PT6311_writeData(((DISK_FULL>>8) & 0xFF) | DVD);
+		DispKeyPT6311::PT6311_writeCommand(ADDRESS9 + 1);
+				DispKeyPT6311::PT6311_writeData((DISK_FULL & 0xFF) | MHzcode | MEMcode);
 
 }
 void DispKeyPT6311::Display_Write(char ascii_data[],byte size, bool _dts, bool _RDS, bool _ST, bool _DOLBY,
-		bool _TUNED, bool _PLAY, bool _FM, bool _MHz, bool _MEM, bool __3D, bool __2dp1, bool __2dp2, bool _dp1, bool _dp2){
+		bool _TUNED, bool _PLAY, bool _FM, bool _MHz, bool _MEM, bool __3D, bool __2dp1, bool __2dp2,
+		bool _dp1, bool _dp2){
 word digit1 = 0x0;
 word digit2 = 0x0;
 word digit3 = 0x0;
@@ -61,23 +59,21 @@ byte length = size;
 	if(length <= 7)
 		for (byte i = 0; i < 7; i++){
 			if(i < size){
-			if (ascii_data[i] == 46 || ascii_data[i] == 58){
+				if (ascii_data[i] == 46 || ascii_data[i] == 58){
 				if(shift == 2) digits[i] = converter (ascii_data[i+2]);
 				else digits[i] = converter (ascii_data[i+1]);
 				shift++;
-			} else {
-				if(shift == 1){
-					if(ascii_data[i+1] == 46 || ascii_data[i+1] == 58){
+				} else {
+					if(shift == 1){
+						if(ascii_data[i+1] == 46 || ascii_data[i+1] == 58){
 						digits[i] = converter (ascii_data[i+2]);
 						shift++;
-					}
-					else digits[i] = converter (ascii_data[i+1]);
+						} else digits[i] = converter (ascii_data[i+1]);
+					} else
+						digits[i] = converter (ascii_data[i]);
 				}
-				else
-				digits[i] = converter (ascii_data[i]);
-			}
 			} else digits[i] = 0x0;
-	}
+		}
 /*	else {
 		for (byte j = 0; j < 7; j++){
 			for(byte i = position; i < size; i++){
@@ -134,7 +130,6 @@ byte length = size;
 					DispKeyPT6311::PT6311_writeCommand(ADDRESS6 + 1);
 						DispKeyPT6311::PT6311_writeData(digits[1] & 0xFF);
 					}
-
 	//Digit 7
 			DispKeyPT6311::PT6311_writeCommand(ADDRESS7);
 					DispKeyPT6311::PT6311_writeData(((digits[0]>>8) & 0xFF));
@@ -169,54 +164,29 @@ byte length = size;
 
 	DispKeyPT6311::PT6311_writeCommand(DISPLAY_MODE_9_19);
 	DispKeyPT6311::PT6311_writeCommand(DISPLAY_ON_14_16);
-//digitalWrite(PT_STB, HIGH);
-		PORTC |= (1 << PC4);
+		PORTC |= (1 << PT_STB);
 }
 
 void DispKeyPT6311::Display_OFF(){
 		DispKeyPT6311::PT6311_writeCommand(DISPLAY_OFF);
-//digitalWrite(PT_STB, HIGH);
-		PORTC |= (1 << PC4);
+		PORTC |= (1 << PT_STB);
 }
 void DispKeyPT6311::PT6311_init(){
 	delay(200);
 	DispKeyPT6311::PT6311_writeCommand(WRITE_DATA_TO_DISPLAY);	//Command 2: Data Setting Commands
-	DispKeyPT6311::PT6311_writeCommand(ADDRESS_BOTTOM);		//Command 3: Address Setting Commands
+	DispKeyPT6311::PT6311_writeCommand(ADDRESS_BOTTOM);			//Command 3: Address Setting Commands
 	for(byte i = 0x00;i <= 0x19;i++){
 		DispKeyPT6311::PT6311_writeData(0x00);					//Data 0x00
 		}
 	DispKeyPT6311::PT6311_writeCommand(DISPLAY_MODE_9_19);		//Command 1: Display Mode Commands
 	DispKeyPT6311::PT6311_writeCommand(DISPLAY_ON_14_16);		//Command 4: Display Control Commands
-//digitalWrite(PT_STB, HIGH);
-	PORTC |= (1 << PC4);
+	PORTC |= (1 << PT_STB);
 }
 
 void DispKeyPT6311::PT6311_writeCommand(byte command){
-//digitalWrite(PT_STB, HIGH);
-	PORTC |= (1 << PC4);
-//1.45us (1us ~ 15 nop)
-	    	_NOP();
-	    	_NOP();
-	    	_NOP();
-	    	_NOP();
-	    	_NOP();
-	    	_NOP();
-	    	_NOP();
-	    	_NOP();
-	    	_NOP();
-	    	_NOP();
-	    	_NOP();
-	    	_NOP();
-	    	_NOP();
-	    	_NOP();
-	    	_NOP();
-	    	_NOP();
-	    	_NOP();
-	    	_NOP();
-	    	_NOP();
-	    	_NOP();
-//digitalWrite(PT_STB, LOW);
-	PORTC &= ~(1 << PC4);
+	PORTC |= (1 << PT_STB);
+	delayMicroseconds(1);
+	PORTC &= ~(1 << PT_STB);
 	DispKeyPT6311::PT6311_writeByte(command);
 }
 
@@ -226,93 +196,32 @@ void DispKeyPT6311::PT6311_writeData(byte data){
 
 void DispKeyPT6311::PT6311_readKey(){
 	DispKeyPT6311::PT6311_writeCommand(READ_KEY);
-//pinMode(PT_DATA, INPUT); zero to DDRx
-	DDRC &= ~(1 << PC3);
-	//1.45us
-		    	_NOP();
-		    	_NOP();
-		    	_NOP();
-		    	_NOP();
-		    	_NOP();
-		    	_NOP();
-		    	_NOP();
-		    	_NOP();
-		    	_NOP();
-		    	_NOP();
-		    	_NOP();
-		    	_NOP();
-		    	_NOP();
-		    	_NOP();
-		    	_NOP();
-		    	_NOP();
-		    	_NOP();
-		    	_NOP();
-		    	_NOP();
-		    	_NOP();
-		for (byte count = 0; count < 8; count++)
-		   {
+	DDRC &= ~(1 << PT_DATA);
+	delayMicroseconds(1);
+	for (byte count = 0; count < 8; count++){
 			if(/*digitalRead(PT_DATA)*/PINC & (1 << 3)) KeyData |= 1;
 			KeyData = KeyData<<1;
-//digitalWrite(PT_CLK, LOW);
-		    PORTC &= ~(1 << PC5);
-//1us
+		    PORTC &= ~(1 << PT_CLK);
+		    delayMicroseconds(1);
+		    PORTC |= (1 << PT_CLK);
 		    	_NOP();
 		    	_NOP();
 		    	_NOP();
-		    	_NOP();
-		    	_NOP();
-		    	_NOP();
-		    	_NOP();
-		    	_NOP();
-		    	_NOP();
-		    	_NOP();
-		    	_NOP();
-		    	_NOP();
-		    	_NOP();
-		    	_NOP();
-		    	_NOP();
-//digitalWrite(PT_CLK, HIGH);
-		    PORTC |= (1 << PC5);
-		    	_NOP();
-		    	_NOP();
-		    	_NOP();
-		   }
-
-//digitalWrite(PT_STB, HIGH);
-		PORTC |= (1 << PC4);
+	}
+		PORTC |= (1 << PT_STB);
 }
 
 void DispKeyPT6311::PT6311_writeByte(byte data){
-//pinMode(PT_DATA, OUTPUT);
-	DDRC |= (1 << PC3);
-	for (byte count = 0; count < 8; count++)
-	   {
+	DDRC |= (1 << PT_DATA);
+	for (byte count = 0; count < 8; count++){
 	    if((data>>count)&0x01)
-//digitalWrite(PT_DATA,HIGH);
-	    	PORTC |= (1 << PC3);
-	                       else
-//digitalWrite(PT_DATA,LOW);
-	                    	   PORTC &= ~(1 << PC3);
-//digitalWrite(PT_CLK, LOW);
-	    PORTC &= ~(1 << PC5);
-//1us
-   		    	_NOP();
-   		    	_NOP();
-   		    	_NOP();
-   		    	_NOP();
-   		    	_NOP();
-   		    	_NOP();
-   		    	_NOP();
-   		    	_NOP();
-   		    	_NOP();
-   		    	_NOP();
-   		    	_NOP();
-   		    	_NOP();
-   		    	_NOP();
-   		    	_NOP();
-//digitalWrite(PT_CLK, HIGH);
-	    PORTC |= (1 << PC5);
-	   }
+	    	PORTC |= (1 << PT_DATA);
+	    else
+	    	PORTC &= ~(1 << PT_DATA);
+	    PORTC &= ~(1 << PT_CLK);
+	    delayMicroseconds(1);
+	    PORTC |= (1 << PT_CLK);
+	}
 }
 word converter(char symbol){
 	word result = 0;

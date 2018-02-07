@@ -41,16 +41,16 @@ byte FUNC = VOLUME;
 
 //number to char array converter
 char * toArray(word number){
-		numberArray[0] = 0;
-        for (byte i = 0; i < 7; i++){
-            if(i <= 4 && number != 0){
-            	numberArray[4-i] = number % 10 + 48;
-            	number /= 10;
-            } else numberArray[i] = 0;
-        }
-        if(numberArray[0] == 48) numberArray[0] = 0;
-        if(numberArray[4] == 0) numberArray[4] = 48;
-        return numberArray;
+	numberArray[0] = 0;
+    for (byte i = 0; i < 7; i++){
+         if(i <= 4 && number != 0){
+           	numberArray[4-i] = number % 10 + 48;
+           	number /= 10;
+         } else numberArray[i] = 0;
     }
+    if(numberArray[0] == 48) numberArray[0] = 0;
+    if(numberArray[4] == 0) numberArray[4] = 48;
+    return numberArray;
+}
 
 #endif /* VARS_H_ */

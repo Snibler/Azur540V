@@ -1,12 +1,12 @@
 /*
  * LV23002M.h
  *
- *   [Примеры расчета делителя]
+ * Sample of divider calculation
  *
- *	1. Диапазон FM, шаг перестройки 50 кГц (DVS=1,SNS=*, вход FMIN). Частота приема FM RF = 90 МГц (IF= +10.7 МГц),
- *	 частота гетеродина FM VCO = 100.7 МГц, PLL fref = 25 кГц (R0=1, R1=1, R2=0, R3=0).
- *	Коэффициент, записываемый в P0..P15 равен (дополнительно делим на 2, так как работает встроенный делитель на 2):
- *	FM VCO / (fref * 2) = 100700 / (25*2) = 2014 (07DEh).
+ * FM, step adjusting 50 kHz (DVS=1,SNS=*, input FMIN). Tuning frequency FM RF = 90 MHz (IF= +10.7 MHz),
+ * frequency of geterodyne FM VCO = 100.7 MHz, PLL fref = 25 kHz (R0=1, R1=1, R2=0, R3=0).
+ * Coefficient to be written in P0..P15 equal (divide on 2, because internal divider on 2 is ON):
+ * FM VCO / (fref * 2) = 100700 / (25*2) = 2014 (07DEh).
  */
 
 #include <Arduino.h>
@@ -16,14 +16,14 @@
 #ifndef LV23002M_H_
 #define LV23002M_H_
 
-#define FQbottom	9820	//87.5MHz шаг перестройки 10 кГц
-#define FQtop		11870	//108MHz шаг перестройки 10 кГц
+#define FQbottom	9820	//87.5MHz tuning step 10 кГц
+#define FQtop		11870	//108MHz tuning step 10 кГц
 
 //defining pins to witch MEGA connected
-#define LV_CE SS		//PB2
-#define LV_DI MOSI		//PB3
-#define LV_CLK SCK		//PB5
-#define LV_DO MISO		//PB4
+#define LV_CE PB2
+#define LV_DI PB3
+#define LV_CLK PB5
+#define LV_DO PB4
 
 //defining chip modes
 #define IN1mode 0x14	//0b00010100
